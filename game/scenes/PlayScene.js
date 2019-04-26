@@ -21,6 +21,8 @@ export default class PlayScene extends Scene {
     taulerimg.displayHeight=window.innerHeight;
     taulerimg.displayWidth=taulerimg.displayHeight*4/3;
 
+    let iconimg = this.add.image(200, 200, 'icon');
+
     /*
     this.bomb = this.physics.add.image(400, 200, 'bomb');
     this.bomb.setCollideWorldBounds(true);
