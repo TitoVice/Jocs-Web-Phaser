@@ -6,6 +6,8 @@ import imgMenuNormal from '@/game/assets/imgMenuNormal.png';
 import imgMenuHover from '@/game/assets/imgMenuHover.png';
 import imgMenuClicked from '@/game/assets/imgMenuClicked.png';
 import iconSettings from '@/game/assets/settings.png';
+import transparent from '@/game/assets/transparent.png';
+import debugSquare from '@/game/assets/cuadratDebug.png';
 
 export default class BootScene extends Scene {
     constructor() {
@@ -20,6 +22,8 @@ export default class BootScene extends Scene {
         this.load.image('imgMenuHover', imgMenuHover)
         this.load.image('imgMenuClicked', imgMenuClicked)
         this.load.image('iconSettings', iconSettings)
+        this.load.image('transparent', transparent)
+        this.load.image('debugSquare', debugSquare)
         // this.load.sprite('icon', icon);
         // this.load.audio('thud', ['assets/thud.mp3', 'assets/thud.ogg'])
     }
