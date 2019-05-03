@@ -29,7 +29,7 @@ export default class PlayScene extends Scene {
     const casellamidaX = taulerimg.displayWidth/9;
     const casellamidaY = 112.2*taulerimg.displayHeight/1008;
 
-    let casellaX = 4; let casellaY = 4;
+    let casellaX = 3; let casellaY = 3; let offsetX = 6; let offsetY = 8;
     let posicioACasellaX = 0; let posicioACasellaY = 0;
 
     let tmp_posX = window.innerWidth/2 - 0.5 * taulerimg.displayHeight;
@@ -43,10 +43,8 @@ export default class PlayScene extends Scene {
 
     console.log(posicioACasellaX + ', ' + posicioACasellaY);
 
-
-
-    let iconSettings = this.add.image(posicioACasellaX, posicioACasellaY, 'iconSettings').setInteractive();
-    iconSettings.setDisplaySize(30,30);
+    let iconSettings = this.add.image(posicioACasellaX + offsetX, posicioACasellaY - casellamidaX/2 + offsetY, 'iconSettings').setInteractive();
+    iconSettings.setDisplaySize(casellamidaX,casellamidaX);
     let that = this;
     iconSettings.on('pointerup', function(event) {
       that.scene.start('MenuScene'); // Start the main game.
@@ -61,6 +59,7 @@ export default class PlayScene extends Scene {
   update () {
     this.posicioX = this.input.mousePointer.x;
     this.posicioY = this.input.mousePointer.y;
-    this.posicioText.setText('Mouse: ' + this.posicioX + ', ' + this.posicioY + ' | Pantalla: ' + window.innerWidth + ' x ' + window.innerHeight + '\n| Tauler: '+ this.taulerimgX + ' ' + this.taulerimgX);
+    this.posicioText.setText('Mouse: ' + this.posicioX + ', ' + this.posicioY + ' | Pantalla: ' + window.innerWidth + ' x ' + window.innerHeight +
+    '\nTauler: '+ this.taulerimgX + ' ' + this.taulerimgX);
   }
 }
