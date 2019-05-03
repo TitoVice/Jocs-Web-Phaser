@@ -5,7 +5,7 @@ import bomb from '@/game/assets/bomb.png';
 import imgMenuNormal from '@/game/assets/imgMenuNormal.png';
 import imgMenuHover from '@/game/assets/imgMenuHover.png';
 import imgMenuClicked from '@/game/assets/imgMenuClicked.png';
-//import icon from '@/game/assets/icon.svg';
+import iconSettings from '@/game/assets/settings.png';
 
 export default class BootScene extends Scene {
     constructor() {
@@ -19,6 +19,7 @@ export default class BootScene extends Scene {
         this.load.image('imgMenuNormal', imgMenuNormal)
         this.load.image('imgMenuHover', imgMenuHover)
         this.load.image('imgMenuClicked', imgMenuClicked)
+        this.load.image('iconSettings', iconSettings)
         // this.load.sprite('icon', icon);
         // this.load.audio('thud', ['assets/thud.mp3', 'assets/thud.ogg'])
     }
