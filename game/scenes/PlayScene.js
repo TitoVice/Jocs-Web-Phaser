@@ -3,15 +3,17 @@ import { Scene } from 'phaser';
 
 export default class PlayScene extends Scene {
   constructor () {
-    super({ key: 'PlayScene' });
+    super({ key: 'PlayScene', monedes: 'monedes'});
     this.posicioX = 0;
     this.posicioY = 0;
     this.posicioText = 0;
     this.taulerimgX = 0;
     this.taulerimgY = 0;
-    this.monedes = 0;
-    //this.bomb = 0;
     this.nParticules = 100;
+  }
+
+  init (monedes) { // Passem les monedes per referència
+    this.monedes = monedes; 
   }
 
   create () {
@@ -87,19 +89,19 @@ export default class PlayScene extends Scene {
     tendaButton.setDisplaySize(midaTenda*0.67,midaTenda);
     that = this;
     tendaButton.on('pointerup', function(event) {
-      that.scene.start('TendaScene'); // Obre la tenda.
+      that.scene.start('TendaScene', that.monedes); // Obre la tenda.
     });
 
     // POSEM EL CONTADOR DE MONEDES
     let midaMoneda = 50;
-    this.monedes = 0;
+    //console.log(this.monedes);
     let monedesIcon = this.add.image(posicioTendaX, posicioTendaY + tendaButton.displayHeight, 'moneda').setInteractive();
     monedesIcon.setDisplaySize(midaMoneda,midaMoneda);
     that = this;
     monedesIcon.on('pointerup', function(event) {
       that.monedes++; // Incrementa les monedes en 1 quantitat.
     });
-    this.monedesText = this.add.text(posicioTendaX - monedesIcon.displayWidth, posicioTendaY + tendaButton.displayHeight, this.monedes, { fontSize: '32px', fill: '#000'});
+    this.monedesText = this.add.text(posicioTendaX - monedesIcon.displayWidth - 50, posicioTendaY + tendaButton.displayHeight, this.monedes, { fontSize: '32px', fill: '#000'});
 
     // POSEM EL TEXT DEL MOUSE PER DEBUG
     this.posicioText = this.add.text(16, 16, 'Posicio: 0, 0', { fontSize: '32px', fill: '#000'});

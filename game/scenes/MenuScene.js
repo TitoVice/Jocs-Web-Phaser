@@ -4,6 +4,7 @@ export default class MenuScene extends Scene {
     constructor() {
         super({key: 'MenuScene'})
     }
+
     create() {
         console.log("Starting MenuScene ...");
         let fonsimg = this.add.image(window.innerWidth/2, window.innerHeight/2, 'fons');
@@ -27,7 +28,7 @@ export default class MenuScene extends Scene {
 
         var that = this;
         btnStart.on('pointerup', function(event) {
-            that.scene.start('PlayScene'); // Start the main game.
+            that.scene.start('PlayScene', '100'); // Start the main game.
         }); 
     }
 }

@@ -1,5 +1,4 @@
 import {Scene} from 'phaser'
-//import bomb from '@/game/assets/bomb.png';
 import fons from '@/game/assets/sky.png';
 import tauler from '@/game/assets/tauler1.png';
 import imgMenuNormal from '@/game/assets/imgMenuNormal.png';
@@ -27,7 +26,7 @@ export default class BootScene extends Scene {
         this.load.image('debugSquare', debugSquare)
         this.load.image('iconTenda', iconTenda)
         this.load.image('moneda', moneda)
-        // this.load.sprite('icon', icon);
+
         // this.load.audio('thud', ['assets/thud.mp3', 'assets/thud.ogg'])
         //this.load.image('bomb', bomb)
     }

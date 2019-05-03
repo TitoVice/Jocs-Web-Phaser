@@ -2,10 +2,16 @@ import {Scene} from 'phaser'
 
 export default class TendaScene extends Scene {
     constructor() {
-        super({key: 'TendaScene'})
+        super({key: 'TendaScene', monedes: 'monedes'})
     }
+    
+    init (monedes) { // Passem les monedes per referència
+        this.monedes = monedes;
+    } 
+    
     create() {
         console.log("Starting TendaScene ...");
+        console.log("Tens " + this.monedes + " monedes");
         let fonsimg = this.add.image(window.innerWidth/2, window.innerHeight/2, 'fons');
         fonsimg.displayWidth=window.innerWidth*2;
         fonsimg.displayHeight=window.innerHeight*2;
@@ -27,7 +33,7 @@ export default class TendaScene extends Scene {
 
         var that = this;
         btnStart.on('pointerup', function(event) {
-            that.scene.start('PlayScene'); // Start the main game.
+            that.scene.start('PlayScene', that.monedes); // Start the main game.
         }); 
     }
 }
