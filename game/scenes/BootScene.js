@@ -26,9 +26,6 @@ export default class BootScene extends Scene {
         this.load.image('debugSquare', debugSquare)
         this.load.image('iconTenda', iconTenda)
         this.load.image('moneda', moneda)
-
-        // this.load.audio('thud', ['assets/thud.mp3', 'assets/thud.ogg'])
-        //this.load.image('bomb', bomb)
     }
 
     create() {

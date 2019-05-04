@@ -3,23 +3,27 @@ import { Scene } from 'phaser';
 
 export default class PlayScene extends Scene {
   constructor () {
-    super({ key: 'PlayScene', monedes: 'monedes'});
+    super({ key: 'PlayScene' });
     this.posicioX = 0;
     this.posicioY = 0;
     this.posicioText = 0;
     this.taulerimgX = 0;
     this.taulerimgY = 0;
     this.nParticules = 100;
+    this.debug = true;
   }
 
-  init (monedes) { // Passem les monedes per referència
-    this.monedes = monedes; 
+  init (data) { // Copiem totes les variables que ens passa la escena anterior
+    this.monedes = data.monedes;
+    this.torn = data.torn;
+    console.log("Tens " + this.monedes + " monedes \nTorn " + this.torn);
   }
 
   create () {
     console.log("Starting PlayScene ...");
-    //console.log('Pantalla: ' + window.innerWidth + ' x ' + window.innerHeight);
     let that = this;
+
+    // FUNCIONS BOOLEANES DE LES CASELLES
     var es_de_dins = function (x, y) {
       let dins = true;
       if (y === 0 || y === 8) {
@@ -33,7 +37,28 @@ export default class PlayScene extends Scene {
       }
       return dins;
     };
+
+    var es_muntanya = function (x, y) {
+      let muntanya = true;
+      if (y === 3) {
+        muntanya = (x === 3 || x === 7);
+      } else if (y === 4) {
+        muntanya = (x === 1 || x === 7);
+      } else if (y === 5) {
+        muntanya = (x === 0 || x === 4);
+      }
+      return muntanya;
+    };
+
+    var es_palau = function (x, y) {      
+      return (x === 4 && y === 0) || (x === 4 && y === 8);
+    };
+
+    var es_sort = function (x, y) {
+      return (x === 8 && y === 4) || (x === 0 && y === 4);
+    };
     
+    // Pintem el fons
     let fonsimg = this.add.image(window.innerWidth/2, window.innerHeight/2, 'fons');
     fonsimg.displayWidth=window.innerWidth*2;
     fonsimg.displayHeight=window.innerHeight*2;
@@ -48,6 +73,8 @@ export default class PlayScene extends Scene {
     const casellamidaY = 108*taulerimg.displayHeight/1008;
 
     // POSANT TOTS ELS CUADRATS DEL TAULER
+    let textura_cuadrats;
+    this.debug ? textura_cuadrats = 'debugSquare' : textura_cuadrats = 'transparent'; // Si és per debug, dibuixem els cuadrats
     for (let i=0; i<9; i++) {
       for (let j=0; j<9; j++) {
         if (es_de_dins(i,j)) {
@@ -55,18 +82,21 @@ export default class PlayScene extends Scene {
           let offsetX = 6; let offsetY = 25;
           let posicioACasellaX = 0; let posicioACasellaY = 0;
           let tmp_posX = window.innerWidth/2 - 0.5 * taulerimg.displayHeight;
-          if (casellaY%2 != 0) {
+          if (casellaY%2 !== 0) {
             tmp_posX += casellamidaX*0.5;
           }
           let tmp_posY = casellamidaY;
           posicioACasellaX = (casellaX)*casellamidaX + tmp_posX + offsetX;
           posicioACasellaY = (casellaY)*casellamidaY + tmp_posY - casellamidaX/2 + offsetY;
 
-          let iconSettings = this.add.image(posicioACasellaX, posicioACasellaY, 'debugSquare').setInteractive();
+          let iconSettings = this.add.image(posicioACasellaX, posicioACasellaY, textura_cuadrats).setInteractive();
           iconSettings.setDisplaySize(casellamidaX,casellamidaX);
           that = this;
           iconSettings.on('pointerup', function(event) {
             console.log('Casella ' + i + ' ' + j);
+            console.log('Muntanya: ' + es_muntanya(i,j));
+            console.log('Palau: ' + es_palau(i,j));
+            console.log('Sort: ' + es_sort(i,j));
             //that.scene.start('MenuScene');
           });
         }
@@ -89,12 +119,11 @@ export default class PlayScene extends Scene {
     tendaButton.setDisplaySize(midaTenda*0.67,midaTenda);
     that = this;
     tendaButton.on('pointerup', function(event) {
-      that.scene.start('TendaScene', that.monedes); // Obre la tenda.
+      that.scene.start('TendaScene', {monedes: that.monedes, torn: that.torn}); // Obre la tenda.
     });
 
     // POSEM EL CONTADOR DE MONEDES
     let midaMoneda = 50;
-    //console.log(this.monedes);
     let monedesIcon = this.add.image(posicioTendaX, posicioTendaY + tendaButton.displayHeight, 'moneda').setInteractive();
     monedesIcon.setDisplaySize(midaMoneda,midaMoneda);
     that = this;

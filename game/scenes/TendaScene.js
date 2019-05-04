@@ -5,9 +5,11 @@ export default class TendaScene extends Scene {
         super({key: 'TendaScene', monedes: 'monedes'})
     }
     
-    init (monedes) { // Passem les monedes per referència
-        this.monedes = monedes;
-    } 
+    init (data) { // Copiem totes les variables que ens passa la escena anterior
+        this.monedes = data.monedes;
+        this.torn = data.torn;
+        console.log("Tens " + this.monedes + " monedes \nTorn " + this.torn);
+    }
     
     create() {
         console.log("Starting TendaScene ...");
@@ -33,7 +35,7 @@ export default class TendaScene extends Scene {
 
         var that = this;
         btnStart.on('pointerup', function(event) {
-            that.scene.start('PlayScene', that.monedes); // Start the main game.
+            that.scene.start('PlayScene', {monedes: that.monedes, torn: that.torn}); // Start the main game.
         }); 
     }
 }
