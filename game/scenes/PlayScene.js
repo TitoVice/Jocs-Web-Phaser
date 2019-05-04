@@ -4,23 +4,19 @@ import { Scene } from 'phaser';
 export default class PlayScene extends Scene {
   constructor () {
     super({ key: 'PlayScene' });
-    this.posicioX = 0;
-    this.posicioY = 0;
     this.posicioText = 0;
-    this.taulerimgX = 0;
-    this.taulerimgY = 0;
-    this.nParticules = 100;
     this.debug = true;
   }
 
   init (data) { // Copiem totes les variables que ens passa la escena anterior
     this.monedes = data.monedes;
     this.torn = data.torn;
-    console.log("Tens " + this.monedes + " monedes \nTorn " + this.torn);
+    this.jugador_actual = data.jugador_actual;
   }
 
   create () {
     console.log("Starting PlayScene ...");
+    console.log("Tens " + this.monedes + " monedes \nTorn " + this.torn);
     let that = this;
 
     // FUNCIONS BOOLEANES DE LES CASELLES
@@ -39,7 +35,7 @@ export default class PlayScene extends Scene {
     };
 
     var es_muntanya = function (x, y) {
-      let muntanya = true;
+      let muntanya = false;
       if (y === 3) {
         muntanya = (x === 3 || x === 7);
       } else if (y === 4) {
@@ -50,7 +46,7 @@ export default class PlayScene extends Scene {
       return muntanya;
     };
 
-    var es_palau = function (x, y) {      
+    var es_palau = function (x, y) {
       return (x === 4 && y === 0) || (x === 4 && y === 8);
     };
 
@@ -93,11 +89,13 @@ export default class PlayScene extends Scene {
           iconSettings.setDisplaySize(casellamidaX,casellamidaX);
           that = this;
           iconSettings.on('pointerup', function(event) {
-            console.log('Casella ' + i + ' ' + j);
-            console.log('Muntanya: ' + es_muntanya(i,j));
-            console.log('Palau: ' + es_palau(i,j));
-            console.log('Sort: ' + es_sort(i,j));
-            //that.scene.start('MenuScene');
+            console.log('----------------------\n' +
+                        'CASELLA SELECCIONADA\n' +
+                        'Casella: ' + i + ',' + j + '\n' + 
+                        'Muntanya: ' + es_muntanya(i,j) + '\n' +
+                        'Palau: ' + es_palau(i,j) + '\n' +
+                        'Sort: ' + es_sort(i,j) +
+                        '\n----------------------');
           });
         }
       }
@@ -108,7 +106,7 @@ export default class PlayScene extends Scene {
     settingsButton.setDisplaySize(60,60);
     that = this;
     settingsButton.on('pointerup', function(event) {
-      that.scene.start('OpcionsScene'); // Obre el menu d'opcions.
+      that.scene.start('OpcionsScene', {monedes: that.monedes, torn: that.torn, jugador_actual: that.jugador_actual}); // Obre el menu d'opcions.
     });
 
 
@@ -119,8 +117,11 @@ export default class PlayScene extends Scene {
     tendaButton.setDisplaySize(midaTenda*0.67,midaTenda);
     that = this;
     tendaButton.on('pointerup', function(event) {
-      that.scene.start('TendaScene', {monedes: that.monedes, torn: that.torn}); // Obre la tenda.
+      that.scene.start('TendaScene', {monedes: that.monedes, torn: that.torn, jugador_actual: that.jugador_actual}); // Obre la tenda.
     });
+
+    // POSEM EL TEXT DE TORN I DEL JUGADOR ACTUAL A LA PANTALLA
+    this.tornText = this.add.text(16, 50, 'Torn: ' + that.torn + '\nJugador: ' + this.jugador_actual, {fontSize: '32px', fill: '#000'});
 
     // POSEM EL CONTADOR DE MONEDES
     let midaMoneda = 50;
@@ -129,19 +130,19 @@ export default class PlayScene extends Scene {
     that = this;
     monedesIcon.on('pointerup', function(event) {
       that.monedes++; // Incrementa les monedes en 1 quantitat.
+      that.monedesText.setText(that.monedes);
+
+      that.torn++; // Incrementa el torn en 1 quantitat.
+      that.jugador_actual = !that.jugador_actual;
+      that.tornText.setText('Torn: ' + that.torn + '\nJugador: ' + that.jugador_actual);
     });
     this.monedesText = this.add.text(posicioTendaX - monedesIcon.displayWidth - 50, posicioTendaY + tendaButton.displayHeight, this.monedes, { fontSize: '32px', fill: '#000'});
 
     // POSEM EL TEXT DEL MOUSE PER DEBUG
     this.posicioText = this.add.text(16, 16, 'Posicio: 0, 0', { fontSize: '32px', fill: '#000'});
-    this.posicioX = 0;
-    this.posicioY = 0;
   }
 
   update () {
-    this.posicioX = this.input.mousePointer.x;
-    this.posicioY = this.input.mousePointer.y;
-    this.posicioText.setText('Mouse: ' + this.posicioX + ', ' + this.posicioY);
-    this.monedesText.setText(this.monedes);
+    this.posicioText.setText('Mouse: ' + this.input.mousePointer.x + ', ' + this.input.mousePointer.y);
   }
 }

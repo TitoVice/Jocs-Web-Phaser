@@ -28,7 +28,7 @@ export default class MenuScene extends Scene {
 
         var that = this;
         btnStart.on('pointerup', function(event) {
-            that.scene.start('PlayScene', {monedes: '100', torn: '1'}); // Start the main game.
+            that.scene.start('PlayScene', {monedes: '100', torn: '0', jugador_actual: true}); // Start the main game.
         });
     }
 }

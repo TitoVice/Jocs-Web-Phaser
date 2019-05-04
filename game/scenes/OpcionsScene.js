@@ -4,6 +4,14 @@ export default class OpcionsScene extends Scene {
     constructor() {
         super({key: 'OpcionsScene'})
     }
+    
+    init (data) { // Copiem totes les variables que ens passa la escena anterior
+        this.monedes = data.monedes;
+        this.torn = data.torn;
+        this.jugador_actual = data.jugador_actual;
+        console.log("Tens " + this.monedes + " monedes \nTorn " + this.torn);
+    }
+
     create() {
         console.log("Starting OpcionsScene ...");
         let fonsimg = this.add.image(window.innerWidth/2, window.innerHeight/2, 'fons');
@@ -27,7 +35,7 @@ export default class OpcionsScene extends Scene {
 
         var that = this;
         btnStart.on('pointerup', function(event) {
-            that.scene.start('PlayScene'); // Start the main game.
+            that.scene.start('PlayScene', {monedes: that.monedes, torn: that.torn, jugador_actual: that.jugador_actual}); // Start the main game.
         }); 
     }
 }

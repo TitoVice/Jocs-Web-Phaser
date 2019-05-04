@@ -8,6 +8,7 @@ export default class TendaScene extends Scene {
     init (data) { // Copiem totes les variables que ens passa la escena anterior
         this.monedes = data.monedes;
         this.torn = data.torn;
+        this.jugador_actual = data.jugador_actual;
         console.log("Tens " + this.monedes + " monedes \nTorn " + this.torn);
     }
     
@@ -35,7 +36,7 @@ export default class TendaScene extends Scene {
 
         var that = this;
         btnStart.on('pointerup', function(event) {
-            that.scene.start('PlayScene', {monedes: that.monedes, torn: that.torn}); // Start the main game.
+            that.scene.start('PlayScene', {monedes: that.monedes, torn: that.torn, jugador_actual: that.jugador_actual}); // Start the main game.
         }); 
     }
 }
