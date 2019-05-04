@@ -9,6 +9,7 @@ export default class OpcionsScene extends Scene {
         this.monedes = data.monedes;
         this.torn = data.torn;
         this.jugador_actual = data.jugador_actual;
+        this.estat = data.estat;
         console.log("Tens " + this.monedes + " monedes \nTorn " + this.torn);
     }
 
@@ -35,7 +36,7 @@ export default class OpcionsScene extends Scene {
 
         var that = this;
         btnStart.on('pointerup', function(event) {
-            that.scene.start('PlayScene', {monedes: that.monedes, torn: that.torn, jugador_actual: that.jugador_actual}); // Start the main game.
+            that.scene.start('PlayScene', {monedes: that.monedes, torn: that.torn, jugador_actual: that.jugador_actual, estat: that.estat}); // Start the main game.
         }); 
     }
 }
