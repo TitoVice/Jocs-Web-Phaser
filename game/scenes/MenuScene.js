@@ -22,7 +22,7 @@ export default class MenuScene extends Scene {
             btnStart.setTexture('imgMenuNormal');
         });
 
-        btnStart.on('pointerdown', function(event) {
+        btnStart.on('pointerdown', function (event) {
             btnStart.setTexture('imgMenuClicked');
         });
         
@@ -39,8 +39,10 @@ export default class MenuScene extends Scene {
         }
 
         let that = this;
-        btnStart.on('pointerup', function(event) {
-            that.scene.start('PlayScene', {monedes: '100', torn: '1', jugador_actual: true, estat: 'Moure Cavall', posicionsFitxes: posicionsFitxes}); // Start the main game.
+        btnStart.on('pointerup', function (event) {
+            let qui_comença = Math.random() * 100;
+            // Start the main game.
+            that.scene.start('PlayScene', {monedes: '100', torn: '1', jugador_actual: qui_comença < 50, estat: 'Moure Cavall', posicionsFitxes: posicionsFitxes});
         });
     }
 }

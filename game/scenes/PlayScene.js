@@ -4,9 +4,8 @@ import { Scene } from 'phaser';
 export default class PlayScene extends Scene {
   constructor () {
     super({ key: 'PlayScene' });
-    this.posicioText = 0;
-    this.tornText = 0;
-    this.debug = false;
+    this.debugText = 0;
+    this.debug = true;
 
     this.cavallerVermell = 0;
     this.cleroVermell = 0;
@@ -185,10 +184,11 @@ export default class PlayScene extends Scene {
         case 'Moure Clero' :
         case 'Moure Ninja' :
           // Actualitzar posicions a la estructura de dades || vermell
-          if (!es_muntanya(x,y, that.jugador_actual, fitxa, that)) {
+          let totTropa = hi_ha_alguna_tropa(x,y,that);
+          if (!es_muntanya(x,y, that.jugador_actual, fitxa, that) || totTropa.existeixTropa && totTropa.equip !== that.jugador_actual) {
             fitxa.x = x;
             fitxa.y = y;
-          } else {
+          } else { 
             break;
           }
 
@@ -203,16 +203,8 @@ export default class PlayScene extends Scene {
           // Roba carta de la sort
           if (es_sort(x,y)) {
             // Roba carta de la sort
-          }
-
-          // Si s'ha de matar alguna tropa
-          let totTropa = hi_ha_alguna_tropa(x,y,that);
-          if (totTropa.existeixTropa && totTropa.equip !== that.jugador_actual) {
-            // MECANICA DEL PPT
-              // Destruir el que toca
-              // Posicionar-lo a la posicio 0,0 del tauler per determinar-lo mort 
-
-            //totTropa.tropa.destroy();
+            
+            console.log(Math.floor(Math.random() * 5));
           }
           
           // Moure fitxes a posicio x y
@@ -229,10 +221,9 @@ export default class PlayScene extends Scene {
             case 'Moure Ninja':
               that.estat = 'Moure Cavall';
               that.jugador_actual = !that.jugador_actual;
+              that.torn++;
           }
-          that.torn++;
-
-          break;
+        break;
       }
     }
     
@@ -321,7 +312,8 @@ export default class PlayScene extends Scene {
                         //'Muntanya: ' + es_muntanya(i, j) + '\n' +
                         'Palau: ' + es_palau(i,j) + '\n' +
                         'Sort: ' + es_sort(i,j) + '\n' +
-                        'Tropes: ' + hi_ha_alguna_tropa(i,j, that).existeixTropa + ' Equip: ' + hi_ha_alguna_tropa(i,j, that).equip +
+                        'Tropes: ' + hi_ha_alguna_tropa(i,j, that).existeixTropa + '\n' +
+                        'Equip: ' + hi_ha_alguna_tropa(i,j, that).equip +
                         '\n----------------------');
             fer_estat(i,j, that);
           });
@@ -329,49 +321,19 @@ export default class PlayScene extends Scene {
       }
     }
 
-    // POSO EL BOTO DE OPCIONS
-    let settingsButton = this.add.image(window.innerWidth-60,60, 'iconSettings').setInteractive();
-    settingsButton.setDisplaySize(60,60);
-    that = this;
-    settingsButton.on('pointerup', function(event) {
-      that.scene.start('OpcionsScene', {monedes: that.monedes, torn: that.torn, jugador_actual: that.jugador_actual, estat: that.estat, posicionsFitxes: that.posicionsFitxes}); // Obre el menu d'opcions.
-    });
-
-    // POSO EL BOTO DE LA TENDA
-    let midaTenda = 200;
-    let posicioTendaX = window.innerWidth-80, posicioTendaY = window.innerHeight/2;
-    let tendaButton = this.add.image(posicioTendaX, posicioTendaY, 'iconTenda').setInteractive();
-    tendaButton.setDisplaySize(midaTenda*0.67,midaTenda);
-    that = this;
-    tendaButton.on('pointerup', function(event) {
-      that.scene.start('TendaScene', {monedes: that.monedes, torn: that.torn, jugador_actual: that.jugador_actual, estat: that.estat, posicionsFitxes: that.posicionsFitxes}); // Obre la tenda.
-    });
-
-    // POSEM EL TEXT DE TORN I DEL JUGADOR ACTUAL A LA PANTALLA
-    this.tornText = this.add.text(16, 50, 'Torn: ' + that.torn + '\nJugador: ' + this.jugador_actual + '\nEstat: ' + that.estat, {fontSize: '32px', fill: '#000'});
-
-    // POSEM EL CONTADOR DE MONEDES
-    let midaMoneda = 50;
-    let monedesIcon = this.add.image(posicioTendaX, posicioTendaY + tendaButton.displayHeight + midaMoneda*0.25, 'moneda').setInteractive();
-    monedesIcon.setDisplaySize(midaMoneda,midaMoneda);
-    that = this;
-    monedesIcon.on('pointerup', function(event) {
-      that.monedes++; // Incrementa les monedes en 1 quantitat.
-      that.monedesText.setText(that.monedes);
-    });
-    this.monedesText = this.add.text(posicioTendaX - monedesIcon.displayWidth - 50, posicioTendaY + tendaButton.displayHeight, this.monedes, { fontSize: '32px', fill: '#000'});
-
     that = this;
     posicionar_fitxes(that);
 
     // POSEM EL TEXT DEL MOUSE PER DEBUG
-    this.posicioText = this.add.text(16, 16, 'Mouse:', { fontSize: '32px', fill: '#000'});
+    this.debugText = this.add.text(16, 16, '', { fontSize: '32px', fill: '#000'});
   }
 
   update () {
-    this.posicioText.setText('Mouse: ' + this.input.mousePointer.x + ', ' + this.input.mousePointer.y);
-    let nomJugador;
-    this.jugador_actual ? nomJugador = 'Vermell' : nomJugador = 'Blau';
-    this.tornText.setText('Torn: ' + this.torn + '\nJugador: ' + nomJugador + '\nEstat: ' + this.estat);
+    if (this.debug) {
+      let nomJugador;
+      this.jugador_actual ? nomJugador = 'Vermell' : nomJugador = 'Blau';
+      this.debugText.setText('Mouse: ' + this.input.mousePointer.x + ', ' + this.input.mousePointer.y +
+                             '\nTorn: ' + this.torn + '\nJugador: ' + nomJugador + '\nEstat: ' + this.estat);
+    }
   }
 }
