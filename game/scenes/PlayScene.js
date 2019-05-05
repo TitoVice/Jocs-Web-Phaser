@@ -45,7 +45,7 @@ export default class PlayScene extends Scene {
       return dins;
     };
 
-    let es_muntanya = function (x, y, jugador_actual) {
+    let es_muntanya = function (x, y, jugador_actual, fitxa, that) {
       let muntanya = false;
       if (y === 3) {
         muntanya = (x === 3 || x === 7);
@@ -53,12 +53,36 @@ export default class PlayScene extends Scene {
         muntanya = (x === 1 || x === 7);
       } else if (y === 5) {
         muntanya = (x === 0 || x === 4);
-      } else if (jugador_actual) {
+      } else if (jugador_actual) { // Comprovem si vol anar al seu propi palau; en aquest cas, no pot
         muntanya = (x === 4 && y === 8);
       } else {
         muntanya = (x === 4 && y === 0);
       }
-      return muntanya;
+      
+      let posicio_aliada = false;
+      // A part comprovem si el jugador vol anar al mateix lloc que una unitat aliada
+      let tmp_ans = hi_ha_alguna_tropa(x,y,that);
+      posicio_aliada = tmp_ans.existeixTropa && tmp_ans.equip === jugador_actual;
+
+
+      /* Posicions disponibles per avançar 1 casella
+      x-1, y-1	    x, 	 y-1
+      x-1, y		    x,	 y		    x+1, y
+			              x,	 y+1    	x+1, y+1
+      */
+      let esta_massa_lluny = !(x === fitxa.x-1 && y === fitxa.y-1);
+      if (esta_massa_lluny) {
+        esta_massa_lluny = !(x === fitxa.x && y === fitxa.y-1);
+        if (esta_massa_lluny) {
+          esta_massa_lluny = !(x === fitxa.x-1 && y === fitxa.y);
+          if (esta_massa_lluny) {
+            esta_massa_lluny = !(x === fitxa.x+1 && y === fitxa.y);
+            if (esta_massa_lluny) {
+              esta_massa_lluny = !(x === fitxa.x && y === fitxa.y+1);
+              if (esta_massa_lluny) {
+                esta_massa_lluny = !(x === fitxa.x+1 && y === fitxa.y+1);
+      }}}}}
+      return muntanya || posicio_aliada || esta_massa_lluny;
     };
 
     let es_palau = function (x, y, jugador_actual) {
@@ -91,19 +115,31 @@ export default class PlayScene extends Scene {
     };
 
     let hi_ha_alguna_tropa = function (x, y, that) {
-      let tropa = that.posicionsFitxes.cavallV.x === x && that.posicionsFitxes.cavallV.y === y;
-      if (!tropa) {
-        tropa = that.posicionsFitxes.cleroV.x === x && that.posicionsFitxes.cleroV.y === y;
-        if (!tropa) {
-          tropa = that.posicionsFitxes.ninjaV.x === x && that.posicionsFitxes.ninjaV.y === y;
-          if (!tropa) {
-            tropa = that.posicionsFitxes.cavallB.x === x && that.posicionsFitxes.cavallB.y === y;
-            if (!tropa) {
-              tropa = that.posicionsFitxes.cleroB.x === x && that.posicionsFitxes.cleroB.y === y;
-              if (!tropa) {
-                tropa = that.posicionsFitxes.ninjaB.x === x && that.posicionsFitxes.ninjaB.y === y;
+      let existeixTropa = that.posicionsFitxes.cavallV.x === x && that.posicionsFitxes.cavallV.y === y;
+      let tropa = that.cavallerVermell;
+      let equip_tropa = true;
+      if (!existeixTropa) {
+        existeixTropa = that.posicionsFitxes.cleroV.x === x && that.posicionsFitxes.cleroV.y === y;
+        tropa = that.cleroVermell;
+        equip_tropa = true;
+        if (!existeixTropa) {
+          existeixTropa = that.posicionsFitxes.ninjaV.x === x && that.posicionsFitxes.ninjaV.y === y;
+          tropa = that.ninjaVermell;
+          equip_tropa = true;
+          if (!existeixTropa) {
+            existeixTropa = that.posicionsFitxes.cavallB.x === x && that.posicionsFitxes.cavallB.y === y;
+            tropa = that.cavallerBlau;
+            equip_tropa = false;
+            if (!existeixTropa) {
+              existeixTropa = that.posicionsFitxes.cleroB.x === x && that.posicionsFitxes.cleroB.y === y;
+              tropa = that.cleroBlau;
+              equip_tropa = false;
+              if (!existeixTropa) {
+                existeixTropa = that.posicionsFitxes.ninjaB.x === x && that.posicionsFitxes.ninjaB.y === y;
+                tropa = that.ninjaBlau;
+                equip_tropa = false;
       }}}}}
-      return tropa;
+      return {existeixTropa: existeixTropa, tropa: tropa, equip: equip_tropa};
     }
 
     let fer_estat = function(x, y, that) {
@@ -132,20 +168,34 @@ export default class PlayScene extends Scene {
         case 'Moure Clero' :
         case 'Moure Ninja' :
           // Actualitzar posicions a la estructura de dades || vermell
-          if (!es_muntanya(x,y, that.jugador_actual)) {
+          if (!es_muntanya(x,y, that.jugador_actual, fitxa, that)) {
             fitxa.x = x;
             fitxa.y = y;
           } else {
             break;
           }
+
+          // Guanyar la partida
           if (es_palau(x, y, that.jugador_actual)) {
             if (that.jugador_actual)
               that.estat = 'GUANYA JUGADOR VERMELL';
             else
               that.estat = 'GUANYA JUGADOR BLAU';
           }
+
+          // Roba carta de la sort
           if (es_sort(x,y)) {
             // Roba carta de la sort
+          }
+
+          // Si s'ha de matar alguna tropa
+          let totTropa = hi_ha_alguna_tropa(x,y,that);
+          if (totTropa.existeixTropa && totTropa.equip !== that.jugador_actual) {
+            // MECANICA DEL PPT
+              // Destruir el que toca
+              // Posicionar-lo a la posicio 0,0 del tauler per determinar-lo mort 
+
+            //totTropa.tropa.destroy();
           }
           
           // Moure fitxes a posicio x y
@@ -251,10 +301,10 @@ export default class PlayScene extends Scene {
             console.log('----------------------\n' +
                         'CASELLA SELECCIONADA\n' +
                         'Casella: ' + i + ',' + j + '\n' + 
-                        'Muntanya: ' + es_muntanya(i,j) + '\n' +
+                        //'Muntanya: ' + es_muntanya(i, j) + '\n' +
                         'Palau: ' + es_palau(i,j) + '\n' +
                         'Sort: ' + es_sort(i,j) + '\n' +
-                        'Tropes: ' + hi_ha_alguna_tropa(i,j, that) +
+                        'Tropes: ' + hi_ha_alguna_tropa(i,j, that).existeixTropa + ' Equip: ' + hi_ha_alguna_tropa(i,j, that).equip +
                         '\n----------------------');
             fer_estat(i,j, that);
           });
@@ -291,10 +341,6 @@ export default class PlayScene extends Scene {
     monedesIcon.on('pointerup', function(event) {
       that.monedes++; // Incrementa les monedes en 1 quantitat.
       that.monedesText.setText(that.monedes);
-
-      that.torn++; // Incrementa el torn en 1 quantitat.
-      that.jugador_actual = !that.jugador_actual;
-      that.tornText.setText('Torn: ' + that.torn + '\nJugador: ' + that.jugador_actual + '\nEstat: ' + that.estat);
     });
     this.monedesText = this.add.text(posicioTendaX - monedesIcon.displayWidth - 50, posicioTendaY + tendaButton.displayHeight, this.monedes, { fontSize: '32px', fill: '#000'});
 
@@ -307,6 +353,8 @@ export default class PlayScene extends Scene {
 
   update () {
     this.posicioText.setText('Mouse: ' + this.input.mousePointer.x + ', ' + this.input.mousePointer.y);
-    this.tornText.setText('Torn: ' + this.torn + '\nJugador: ' + this.jugador_actual + '\nEstat: ' + this.estat);
+    let nomJugador;
+    this.jugador_actual ? nomJugador = 'Vermell' : nomJugador = 'Blau';
+    this.tornText.setText('Torn: ' + this.torn + '\nJugador: ' + nomJugador + '\nEstat: ' + this.estat);
   }
 }
