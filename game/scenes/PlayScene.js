@@ -30,7 +30,7 @@ export default class PlayScene extends Scene {
     console.log("Tens " + this.monedes + " monedes\nTorn " + this.torn);
     let that = this;
 
-    // FUNCIONS BOOLEANES DE LES CASELLES
+    // ---------------------- FUNCIONS BOOLEANES DE LES CASELLES ---------------------- 
     let es_de_dins = function (x, y) {
       let dins = true;
       if (y === 0 || y === 8) {
@@ -66,23 +66,40 @@ export default class PlayScene extends Scene {
 
 
       /* Posicions disponibles per avançar 1 casella
-      x-1, y-1	    x, 	 y-1
+      x-1, y-1	    x, 	 y-1      
       x-1, y		    x,	 y		    x+1, y
-			              x,	 y+1    	x+1, y+1
+      x-1, y+1      x,	 y+1    	x+1, y+1
+      ![](/src/posició veins.png)
       */
-      let esta_massa_lluny = !(x === fitxa.x-1 && y === fitxa.y-1);
-      if (esta_massa_lluny) {
-        esta_massa_lluny = !(x === fitxa.x && y === fitxa.y-1);
-        if (esta_massa_lluny) {
-          esta_massa_lluny = !(x === fitxa.x-1 && y === fitxa.y);
-          if (esta_massa_lluny) {
-            esta_massa_lluny = !(x === fitxa.x+1 && y === fitxa.y);
-            if (esta_massa_lluny) {
-              esta_massa_lluny = !(x === fitxa.x && y === fitxa.y+1);
-              if (esta_massa_lluny) {
-                esta_massa_lluny = !(x === fitxa.x+1 && y === fitxa.y+1);
-      }}}}}
-      return muntanya || posicio_aliada || esta_massa_lluny;
+      console.log ( 'X: ' + fitxa.x + ' Y: ' + fitxa.y + ' | X final: ' + x + ' Y final: ' + y);
+      //console.log (that.posicionsFitxes);
+
+      let vei = (x === fitxa.x && y === fitxa.y-1);
+      if (!vei) {
+        vei = (x === fitxa.x-1 && y === fitxa.y);
+        if (!vei) {
+          vei = (x === fitxa.x+1 && y === fitxa.y);
+          if (!vei) {
+            vei = (x === fitxa.x && y === fitxa.y+1);
+          }
+        }
+      }
+
+      if (!vei) {
+        // Si està desplaçat a la dreta
+        if (fitxa.y % 2 === 0) {
+          vei = (x === fitxa.x-1 && y === fitxa.y-1);
+          if (!vei) {
+            vei = (x === fitxa.x-1 && y === fitxa.y+1);
+          }
+        } else {
+          vei = (x === fitxa.x+1 && y === fitxa.y-1);
+          if (!vei) {
+            vei = (x === fitxa.x+1 && y === fitxa.y+1);
+          }
+        }
+      }
+      return muntanya || posicio_aliada || !vei;
     };
 
     let es_palau = function (x, y, jugador_actual) {
