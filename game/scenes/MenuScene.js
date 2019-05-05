@@ -40,7 +40,7 @@ export default class MenuScene extends Scene {
 
         let that = this;
         btnStart.on('pointerup', function(event) {
-            that.scene.start('PlayScene', {monedes: '100', torn: '1', jugador_actual: true, estat: 'Moure Cavall', posFitxes: posicionsFitxes}); // Start the main game.
+            that.scene.start('PlayScene', {monedes: '100', torn: '1', jugador_actual: true, estat: 'Moure Cavall', posicionsFitxes: posicionsFitxes}); // Start the main game.
         });
     }
 }

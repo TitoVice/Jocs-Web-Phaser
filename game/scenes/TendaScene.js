@@ -10,6 +10,7 @@ export default class TendaScene extends Scene {
         this.torn = data.torn;
         this.jugador_actual = data.jugador_actual;
         this.estat = data.estat;
+        this.posicionsFitxes = data.posicionsFitxes;
         console.log("Tens " + this.monedes + " monedes \nTorn " + this.torn);
     }
     
@@ -37,7 +38,7 @@ export default class TendaScene extends Scene {
 
         var that = this;
         btnStart.on('pointerup', function(event) {
-            that.scene.start('PlayScene', {monedes: that.monedes, torn: that.torn, jugador_actual: that.jugador_actual, estat: that.estat}); // Start the main game.
+            that.scene.start('PlayScene', {monedes: that.monedes, torn: that.torn, jugador_actual: that.jugador_actual, estat: that.estat, posicionsFitxes: that.posicionsFitxes}); // Start the main game.
         }); 
     }
 }

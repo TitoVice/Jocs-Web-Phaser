@@ -5,7 +5,16 @@ export default class PlayScene extends Scene {
   constructor () {
     super({ key: 'PlayScene' });
     this.posicioText = 0;
+    this.tornText = 0;
     this.debug = false;
+
+    this.cavallerVermell = 0;
+    this.cleroVermell = 0;
+    this.ninjaVermell = 0;
+
+    this.cavallerBlau = 0;
+    this.cleroBlau = 0;
+    this.ninjaBlau = 0;
   }
 
   init (data) { // Copiem totes les variables que ens passa la escena anterior
@@ -13,7 +22,7 @@ export default class PlayScene extends Scene {
     this.torn = data.torn;
     this.jugador_actual = data.jugador_actual;
     this.estat = data.estat;
-    this.posicionsFitxes = data.posFitxes;
+    this.posicionsFitxes = data.posicionsFitxes;
   }
 
   create () {
@@ -36,7 +45,7 @@ export default class PlayScene extends Scene {
       return dins;
     };
 
-    let es_muntanya = function (x, y) {
+    let es_muntanya = function (x, y, jugador_actual) {
       let muntanya = false;
       if (y === 3) {
         muntanya = (x === 3 || x === 7);
@@ -44,19 +53,30 @@ export default class PlayScene extends Scene {
         muntanya = (x === 1 || x === 7);
       } else if (y === 5) {
         muntanya = (x === 0 || x === 4);
+      } else if (jugador_actual) {
+        muntanya = (x === 4 && y === 8);
+      } else {
+        muntanya = (x === 4 && y === 0);
       }
       return muntanya;
     };
 
-    let es_palau = function (x, y) {
-      return (x === 4 && y === 0) || (x === 4 && y === 8);
+    let es_palau = function (x, y, jugador_actual) {
+      let palau = false;
+      if (jugador_actual) {
+        palau = x === 4 && y === 0;
+      } else {
+        palau = x === 4 && y === 8;
+      }
+      return palau;
+      ;
     };
 
     let es_sort = function (x, y) {
       return (x === 8 && y === 4) || (x === 0 && y === 4);
     };
 
-    let casella_posicio = function (x,y) {
+    let casella_posicio = function (x, y) {
       let posicio = {x: x, y: y};
       let casellaX = x, casellaY = y;
       let offsetX = 6; let offsetY = 25;
@@ -70,19 +90,81 @@ export default class PlayScene extends Scene {
       return posicio;
     };
 
-    let hi_ha_alguna_tropa = function (x,y) {
-      return true;
+    let hi_ha_alguna_tropa = function (x, y, that) {
+      let tropa = that.posicionsFitxes.cavallV.x === x && that.posicionsFitxes.cavallV.y === y;
+      if (!tropa) {
+        tropa = that.posicionsFitxes.cleroV.x === x && that.posicionsFitxes.cleroV.y === y;
+        if (!tropa) {
+          tropa = that.posicionsFitxes.ninjaV.x === x && that.posicionsFitxes.ninjaV.y === y;
+          if (!tropa) {
+            tropa = that.posicionsFitxes.cavallB.x === x && that.posicionsFitxes.cavallB.y === y;
+            if (!tropa) {
+              tropa = that.posicionsFitxes.cleroB.x === x && that.posicionsFitxes.cleroB.y === y;
+              if (!tropa) {
+                tropa = that.posicionsFitxes.ninjaB.x === x && that.posicionsFitxes.ninjaB.y === y;
+      }}}}}
+      return tropa;
     }
 
-    let fer_estat = function(x,y, that) {
+    let fer_estat = function(x, y, that) {
+      let fitxa = 0;
+      if (that.jugador_actual) {
+        switch (that.estat) {
+          case 'Moure Cavall' : 
+            fitxa = that.posicionsFitxes.cavallV; break;
+          case 'Moure Clero' :
+            fitxa = that.posicionsFitxes.cleroV; break;
+          case 'Moure Ninja' :
+            fitxa = that.posicionsFitxes.ninjaV; break;
+        }
+      } else {
+        switch (that.estat) {
+          case 'Moure Cavall' : 
+            fitxa = that.posicionsFitxes.cavallB; break;
+          case 'Moure Clero' :
+            fitxa = that.posicionsFitxes.cleroB; break;
+          case 'Moure Ninja' :
+            fitxa = that.posicionsFitxes.ninjaB; break;
+        }
+      }
       switch (that.estat) {
-        case 'Moure Cavall' : 
-          if (that.jugador_actual) {
-            // Moure cavall vermell a posicio x y
+        case 'Moure Cavall' :
+        case 'Moure Clero' :
+        case 'Moure Ninja' :
+          // Actualitzar posicions a la estructura de dades || vermell
+          if (!es_muntanya(x,y, that.jugador_actual)) {
+            fitxa.x = x;
+            fitxa.y = y;
           } else {
-            // Moure cavall blau a posicio x y
+            break;
           }
+          if (es_palau(x, y, that.jugador_actual)) {
+            if (that.jugador_actual)
+              that.estat = 'GUANYA JUGADOR VERMELL';
+            else
+              that.estat = 'GUANYA JUGADOR BLAU';
+          }
+          if (es_sort(x,y)) {
+            // Roba carta de la sort
+          }
+          
+          // Moure fitxes a posicio x y
+          moure_fitxes(that);
+
           // Canviar estat a seguent
+          switch (that.estat) {
+            case 'Moure Cavall':
+              that.estat = 'Moure Clero';
+              break;
+            case 'Moure Clero':
+              that.estat = 'Moure Ninja';
+              break;
+            case 'Moure Ninja':
+              that.estat = 'Moure Cavall';
+              that.jugador_actual = !that.jugador_actual;
+          }
+          that.torn++;
+
           break;
       }
     }
@@ -92,30 +174,53 @@ export default class PlayScene extends Scene {
 
       // Equip vermell
       let posicioActual = casella_posicio(that.posicionsFitxes.cavallV.x, that.posicionsFitxes.cavallV.y);
-      let cavallerVermell = that.add.image(posicioActual.x, posicioActual.y, 'cavallerVermell');
-      cavallerVermell.setDisplaySize(casellamidaY, casellamidaY);
+      that.cavallerVermell = that.add.image(posicioActual.x, posicioActual.y, 'cavallerVermell');
+      that.cavallerVermell.setDisplaySize(casellamidaY, casellamidaY);
 
       posicioActual = casella_posicio(that.posicionsFitxes.cleroV.x, that.posicionsFitxes.cleroV.y);
-      let cleroVermell = that.add.image(posicioActual.x, posicioActual.y, 'cleroVermell');
-      cleroVermell.setDisplaySize(casellamidaY, casellamidaY);
+      that.cleroVermell = that.add.image(posicioActual.x, posicioActual.y, 'cleroVermell');
+      that.cleroVermell.setDisplaySize(casellamidaY, casellamidaY);
 
       posicioActual = casella_posicio(that.posicionsFitxes.ninjaV.x, that.posicionsFitxes.ninjaV.y);
-      let ninjaVermell = that.add.image(posicioActual.x, posicioActual.y, 'ninjaVermell');
-      ninjaVermell.setDisplaySize(casellamidaY, casellamidaY);
+      that.ninjaVermell = that.add.image(posicioActual.x, posicioActual.y, 'ninjaVermell');
+      that.ninjaVermell.setDisplaySize(casellamidaY, casellamidaY);
 
 
       // Equip blau
       posicioActual = casella_posicio(that.posicionsFitxes.cavallB.x, that.posicionsFitxes.cavallB.y);
-      let cavallerBlau = that.add.image(posicioActual.x, posicioActual.y, 'cavallerBlau');
-      cavallerBlau.setDisplaySize(casellamidaY, casellamidaY);
+      that.cavallerBlau = that.add.image(posicioActual.x, posicioActual.y, 'cavallerBlau');
+      that.cavallerBlau.setDisplaySize(casellamidaY, casellamidaY);
 
       posicioActual = casella_posicio(that.posicionsFitxes.cleroB.x, that.posicionsFitxes.cleroB.y);
-      let cleroBlau = that.add.image(posicioActual.x, posicioActual.y, 'cleroBlau');
-      cleroBlau.setDisplaySize(casellamidaY, casellamidaY);
+      that.cleroBlau = that.add.image(posicioActual.x, posicioActual.y, 'cleroBlau');
+      that.cleroBlau.setDisplaySize(casellamidaY, casellamidaY);
 
       posicioActual = casella_posicio(that.posicionsFitxes.ninjaB.x, that.posicionsFitxes.ninjaB.y);
-      let ninjaBlau = that.add.image(posicioActual.x, posicioActual.y, 'ninjaBlau');
-      ninjaBlau.setDisplaySize(casellamidaY, casellamidaY);
+      that.ninjaBlau = that.add.image(posicioActual.x, posicioActual.y, 'ninjaBlau');
+      that.ninjaBlau.setDisplaySize(casellamidaY, casellamidaY);
+    }
+
+    let moure_fitxes = function(that) {
+      // Equip vermell
+      let posicioActual = casella_posicio(that.posicionsFitxes.cavallV.x, that.posicionsFitxes.cavallV.y);
+      that.cavallerVermell.setPosition(posicioActual.x, posicioActual.y);
+
+      posicioActual = casella_posicio(that.posicionsFitxes.cleroV.x, that.posicionsFitxes.cleroV.y);
+      that.cleroVermell.setPosition(posicioActual.x, posicioActual.y);
+
+      posicioActual = casella_posicio(that.posicionsFitxes.ninjaV.x, that.posicionsFitxes.ninjaV.y);
+      that.ninjaVermell.setPosition(posicioActual.x, posicioActual.y);
+
+
+      // Equip blau
+      posicioActual = casella_posicio(that.posicionsFitxes.cavallB.x, that.posicionsFitxes.cavallB.y);
+      that.cavallerBlau.setPosition(posicioActual.x, posicioActual.y);;
+
+      posicioActual = casella_posicio(that.posicionsFitxes.cleroB.x, that.posicionsFitxes.cleroB.y);
+      that.cleroBlau.setPosition(posicioActual.x, posicioActual.y);
+
+      posicioActual = casella_posicio(that.posicionsFitxes.ninjaB.x, that.posicionsFitxes.ninjaB.y);
+      that.ninjaBlau.setPosition(posicioActual.x, posicioActual.y);
     }
 
     // Pintem el fons
@@ -149,7 +254,7 @@ export default class PlayScene extends Scene {
                         'Muntanya: ' + es_muntanya(i,j) + '\n' +
                         'Palau: ' + es_palau(i,j) + '\n' +
                         'Sort: ' + es_sort(i,j) + '\n' +
-                        'Tropes: ' + hi_ha_alguna_tropa(i,j) +
+                        'Tropes: ' + hi_ha_alguna_tropa(i,j, that) +
                         '\n----------------------');
             fer_estat(i,j, that);
           });
@@ -162,7 +267,7 @@ export default class PlayScene extends Scene {
     settingsButton.setDisplaySize(60,60);
     that = this;
     settingsButton.on('pointerup', function(event) {
-      that.scene.start('OpcionsScene', {monedes: that.monedes, torn: that.torn, jugador_actual: that.jugador_actual}); // Obre el menu d'opcions.
+      that.scene.start('OpcionsScene', {monedes: that.monedes, torn: that.torn, jugador_actual: that.jugador_actual, estat: that.estat, posicionsFitxes: that.posicionsFitxes}); // Obre el menu d'opcions.
     });
 
     // POSO EL BOTO DE LA TENDA
@@ -172,7 +277,7 @@ export default class PlayScene extends Scene {
     tendaButton.setDisplaySize(midaTenda*0.67,midaTenda);
     that = this;
     tendaButton.on('pointerup', function(event) {
-      that.scene.start('TendaScene', {monedes: that.monedes, torn: that.torn, jugador_actual: that.jugador_actual, estat: that.estat}); // Obre la tenda.
+      that.scene.start('TendaScene', {monedes: that.monedes, torn: that.torn, jugador_actual: that.jugador_actual, estat: that.estat, posicionsFitxes: that.posicionsFitxes}); // Obre la tenda.
     });
 
     // POSEM EL TEXT DE TORN I DEL JUGADOR ACTUAL A LA PANTALLA
@@ -180,7 +285,7 @@ export default class PlayScene extends Scene {
 
     // POSEM EL CONTADOR DE MONEDES
     let midaMoneda = 50;
-    let monedesIcon = this.add.image(posicioTendaX, posicioTendaY + tendaButton.displayHeight, 'moneda').setInteractive();
+    let monedesIcon = this.add.image(posicioTendaX, posicioTendaY + tendaButton.displayHeight + midaMoneda*0.25, 'moneda').setInteractive();
     monedesIcon.setDisplaySize(midaMoneda,midaMoneda);
     that = this;
     monedesIcon.on('pointerup', function(event) {
@@ -198,10 +303,10 @@ export default class PlayScene extends Scene {
 
     // POSEM EL TEXT DEL MOUSE PER DEBUG
     this.posicioText = this.add.text(16, 16, 'Mouse:', { fontSize: '32px', fill: '#000'});
-
   }
 
   update () {
     this.posicioText.setText('Mouse: ' + this.input.mousePointer.x + ', ' + this.input.mousePointer.y);
+    this.tornText.setText('Torn: ' + this.torn + '\nJugador: ' + this.jugador_actual + '\nEstat: ' + this.estat);
   }
 }
