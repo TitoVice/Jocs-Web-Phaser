@@ -201,26 +201,21 @@ export default class PlayScene extends Scene {
             break;
           }
 
-          // Guanyar la partida
-          if (es_palau(x, y, that.jugador_actual)) {
-            if (that.jugador_actual)
-              that.estat = 'GUANYA JUGADOR VERMELL';
-            else
-              that.estat = 'GUANYA JUGADOR BLAU';
-          }
-
           // Roba carta de la sort
           if (es_sort(x,y)) {
             // Roba carta de la sort
             let posicionovaX = Math.floor(Math.random() * (8-1) + 1);
             let posicionovaY = Math.floor(Math.random() * (8-1) + 1);
+            if (that.debug) {
+              console.log('GENEREM UN NOU NUMERO ALEATORI \n' + posicionovaX + ' ' + posicionovaY);
+            }
             // -------------------------------------------------------------------- condicio esta malament --------------------------------------------------------------------
             while (!es_muntanya(x,y, that.jugador_actual, fitxa, that)) {
+              posicionovaX = Math.floor(Math.random() * (8-1) + 1);
+              posicionovaY = Math.floor(Math.random() * (8-1) + 1);
               if (that.debug) {
                 console.log(posicionovaX + ' ' + posicionovaY);
               }
-              posicionovaX = Math.floor(Math.random() * (8-1) + 1);
-              posicionovaY = Math.floor(Math.random() * (8-1) + 1);
             }
 
             if (!that.cartaSort.visible) {
@@ -230,7 +225,7 @@ export default class PlayScene extends Scene {
               that.cartaSort.displayHeight = midaCarta;
               that.cartaSort.visible = true;
               let jugador;
-              that.jugador_actual ? jugador = ' vermell' : jugador = ' blau';
+              that.jugador_actual ? jugador = ' vermell' : jugador = ' groc';
               that.textCartaSort = that.add.text(window.innerWidth/2 - midaCarta * 0.65/2 + 40, window.innerHeight/2 + midaCarta*0.25 - 40,
                 that.estat + jugador + '\na la posició (' +posicionovaX + ',' + posicionovaY + ')\ndel tauler', { fontSize: '19px', fill: '#000'});
             }
@@ -242,6 +237,12 @@ export default class PlayScene extends Scene {
             }
           }
           
+          // Guanyar la partida
+          if (es_palau(x, y, that.jugador_actual)) {
+            that.jugador_actual ? that.estat = 'VERMELL' : that.estat = 'GROC';            
+            that.scene.start('MenuScene', {estat: that.estat, torns: that.torns});
+          }
+
           // Moure fitxes a posicio x y
           moure_fitxes(that);
 

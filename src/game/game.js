@@ -2,6 +2,7 @@ import Phaser from 'phaser'
 import BootScene from './scenes/BootScene'
 import PlayScene from './scenes/PlayScene'
 import MenuScene from './scenes/MenuScene'
+import FinalScene from './scenes/FinalScene';
 //import OpcionsScene from './scenes/OpcionsScene'
 //import TendaScene from './scenes/TendaScene'
 
@@ -18,7 +19,7 @@ function launch() {
                 debug: false
             }
         },
-        scene: [BootScene, PlayScene, MenuScene]
+        scene: [BootScene, PlayScene, MenuScene, FinalScene]
     })
 }
 

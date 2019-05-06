@@ -1,24 +1,24 @@
 import {Scene} from 'phaser'
 
-export default class OpcionsScene extends Scene {
+export default class FinalScene extends Scene {
     constructor() {
-        super({key: 'OpcionsScene'})
+        super({key: 'FinalScene', monedes: 'monedes'})
     }
     
     init (data) { // Copiem totes les variables que ens passa la escena anterior
-        this.monedes = data.monedes;
         this.torn = data.torn;
-        this.jugador_actual = data.jugador_actual;
         this.estat = data.estat;
-        this.posicionsFitxes = data.posicionsFitxes;
-        console.log("Tens " + this.monedes + " monedes \nTorn " + this.torn);
     }
-
+    
     create() {
-        console.log("Starting OpcionsScene ...");
+        console.log("Starting FinalScene ...");
         let fonsimg = this.add.image(window.innerWidth/2, window.innerHeight/2, 'fons');
         fonsimg.displayWidth=window.innerWidth*2;
         fonsimg.displayHeight=window.innerHeight*2;
+
+        // RESULTAT DEL MATCH
+        let textResultat = this.add.text(window.innerWidth/2, window.innerHeight/2,
+            'Ha guanyat el jugador ' + this.estat + ' en ' + this.torn + ' torns!.', { fontSize: '19px', fill: '#000'});
 
         // Start Button
         let btnStart = this.add.sprite(window.innerWidth/2, window.innerHeight/2, 'imgMenuNormal').setInteractive();
@@ -35,7 +35,7 @@ export default class OpcionsScene extends Scene {
             btnStart.setTexture('imgMenuClicked');
         });
 
-        var that = this;
+        let that = this;
         btnStart.on('pointerup', function(event) {
             that.scene.start('PlayScene', {monedes: that.monedes, torn: that.torn, jugador_actual: that.jugador_actual, estat: that.estat, posicionsFitxes: that.posicionsFitxes}); // Start the main game.
         }); 

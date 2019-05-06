@@ -14,9 +14,9 @@ import cavallerVermell from '@/game/assets/Fitxes/fitxes_caballer_red.png';
 import cleroVermell from '@/game/assets/Fitxes/fitxes_clero_red.png';
 import ninjaVermell from '@/game/assets/Fitxes/fitxes_ninja_red.png';
 
-import cavallerBlau from '@/game/assets/Fitxes/fitxes_caballer_blau.png';
-import cleroBlau from '@/game/assets/Fitxes/fitxes_clero_blau.png';
-import ninjaBlau from '@/game/assets/Fitxes/fitxes_ninja_blau.png';
+import cavallerGroc from '@/game/assets/Fitxes/fitxes_caballer_groc.png';
+import cleroGroc from '@/game/assets/Fitxes/fitxes_clero_groc.png';
+import ninjaGroc from '@/game/assets/Fitxes/fitxes_ninja_groc.png';
 
 
 export default class BootScene extends Scene {
@@ -41,9 +41,9 @@ export default class BootScene extends Scene {
         this.load.image('cleroVermell', cleroVermell)
         this.load.image('ninjaVermell', ninjaVermell)
 
-        this.load.image('cavallerBlau', cavallerBlau)
-        this.load.image('cleroBlau', cleroBlau)
-        this.load.image('ninjaBlau', ninjaBlau)
+        this.load.image('cavallerBlau', cavallerGroc)
+        this.load.image('cleroBlau', cleroGroc)
+        this.load.image('ninjaBlau', ninjaGroc)
     }
 
     create() {

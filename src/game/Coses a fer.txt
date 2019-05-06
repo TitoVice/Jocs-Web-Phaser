@@ -1,0 +1,78 @@
+-- Començar partida:
+	- TORNS 							-----FET-----
+	- Treure tropes						-----FET-----
+	- Moure tropes						-----FET-----
+
+----------------------------------------------------
+
+Estats del joc:
+
+- Treure tropes Jugador1
+- Moure tropes Jugador1 {
+	for (cada tropa del Jugador1) {
+		moure una quantitat de caselles que pugui
+		if (hi ha una tropa enemiga)
+			no hi pot accedir
+		if (una tropa arriba al palau enemic)
+			guanyar la partida
+		if (hi ha una tropa a una casella de la sort)
+			carta de la sort aleatoria s'acciona
+	}
+}
+- Treure tropes Jugador2
+- Moure tropes Jugador2
+- ...
+
+----------------------------------------------------
+
+CALCULAR VEINS
+
+// Y parell
+
+3,3	4,3	
+3,4	4,4	5,4
+3,5 4,5
+
+x-1, y-1	x, y-1
+x-1, y		x, y		x+1, y
+x-1, y+1	x, y+1
+
+x-1, y-1
+x-1, y+1
+
+// Y senar
+
+	3,2	4,2
+2,3	3,3	4,3
+	3,4	4,4
+	
+			x, y-1		x+1, y-1
+x-1, y		xxxxx		x+1, y
+			x, y+1		x+1, y+1
+
+x+1, y-1
+x+1, y+1
+
+PER TOTS
+x, y-1
+x-1, y
+x+1, y
+x, y+1
+
+
+----------------------------------------------------
+
+CASELLES DE LA SORT
+
+una tropa del jugador_actual es mou a una posicio aleatoria del tauler
+	aquesta casella no pot ser de la sort ni muntanya [inclosa la posicio de les fitxes]!!!
+
+
+CAMBIAR ESCENA A FinalScene.js quan un dels dos acaba la partida
+
+A FinalScene.js apareix un text que diu qui ha guanyat i en quants torns, un botó de tornar a jugar i un botó d'anar a MenuScene.js
+
+Text que diu qui li toca i què fer en cada moment de la partida
+la posicio del text es a 1/4 de window.Height si el jugador_actual es blau
+si es el vermell, llavors 3/4 de window.Height
+Dins d'aquest text posarà el què ha de fer.
