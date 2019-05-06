@@ -42,7 +42,7 @@ export default class MenuScene extends Scene {
         btnStart.on('pointerup', function (event) {
             let qui_comença = Math.random() * 100;
             // Start the main game.
-            that.scene.start('PlayScene', {monedes: '100', torn: '1', jugador_actual: qui_comença < 50, estat: 'Moure Cavall', posicionsFitxes: posicionsFitxes});
+            that.scene.start('PlayScene', {torn: '1', jugador_actual: qui_comença < 50, estat: 'Moure Cavall', posicionsFitxes: posicionsFitxes});
         });
     }
 }

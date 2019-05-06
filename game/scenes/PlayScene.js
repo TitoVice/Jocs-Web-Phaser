@@ -5,7 +5,7 @@ export default class PlayScene extends Scene {
   constructor () {
     super({ key: 'PlayScene' });
     this.debugText = 0;
-    this.debug = true;
+    this.debug = false;
 
     this.cavallerVermell = 0;
     this.cleroVermell = 0;
@@ -14,10 +14,15 @@ export default class PlayScene extends Scene {
     this.cavallerBlau = 0;
     this.cleroBlau = 0;
     this.ninjaBlau = 0;
+
+    this.carta_sort_mostrada = false;
+    this.textCartaSort = 0;
+    this.cartaSort = 0;
+    this.constant_temps_carta_sort = 1000;
+    this.temps_carta_a_sortir = this.constant_temps_carta_sort; // En ms
   }
 
   init (data) { // Copiem totes les variables que ens passa la escena anterior
-    this.monedes = data.monedes;
     this.torn = data.torn;
     this.jugador_actual = data.jugador_actual;
     this.estat = data.estat;
@@ -26,7 +31,7 @@ export default class PlayScene extends Scene {
 
   create () {
     console.log("Starting PlayScene ...");
-    console.log("Tens " + this.monedes + " monedes\nTorn " + this.torn);
+    console.log('Torn ' + this.torn);
     let that = this;
 
     // ---------------------- FUNCIONS BOOLEANES DE LES CASELLES ---------------------- 
@@ -63,15 +68,17 @@ export default class PlayScene extends Scene {
       let tmp_ans = hi_ha_alguna_tropa(x,y,that);
       posicio_aliada = tmp_ans.existeixTropa && tmp_ans.equip === jugador_actual;
 
+      if (that.debug) {
+        console.log ( 'X: ' + fitxa.x + ' Y: ' + fitxa.y + ' | X final: ' + x + ' Y final: ' + y);
+        console.log (that.posicionsFitxes);
+      }
 
       /* Posicions disponibles per avançar 1 casella
-      x-1, y-1	    x, 	 y-1      
-      x-1, y		    x,	 y		    x+1, y
-      x-1, y+1      x,	 y+1    	x+1, y+1
+          x-1, y-1	    x, 	 y-1      x+1, y-1
+          x-1, y		    x,	 y		    x+1, y
+          x-1, y+1      x,	 y+1    	x+1, y+1
       ![](/src/posició veins.png)
       */
-      console.log ( 'X: ' + fitxa.x + ' Y: ' + fitxa.y + ' | X final: ' + x + ' Y final: ' + y);
-      //console.log (that.posicionsFitxes);
 
       let vei = (x === fitxa.x && y === fitxa.y-1);
       if (!vei) {
@@ -98,7 +105,8 @@ export default class PlayScene extends Scene {
           }
         }
       }
-      return muntanya || posicio_aliada || !vei;
+      
+      return muntanya || posicio_aliada || !vei || !es_de_dins(x,y);
     };
 
     let es_palau = function (x, y, jugador_actual) {
@@ -184,8 +192,7 @@ export default class PlayScene extends Scene {
         case 'Moure Clero' :
         case 'Moure Ninja' :
           // Actualitzar posicions a la estructura de dades || vermell
-          let totTropa = hi_ha_alguna_tropa(x,y,that);
-          if (!es_muntanya(x,y, that.jugador_actual, fitxa, that) || totTropa.existeixTropa && totTropa.equip !== that.jugador_actual) {
+          if (!es_muntanya(x,y, that.jugador_actual, fitxa, that) || hi_ha_alguna_tropa(x,y,that).existeixTropa) {
             fitxa.x = x;
             fitxa.y = y;
           } else { 
@@ -203,8 +210,34 @@ export default class PlayScene extends Scene {
           // Roba carta de la sort
           if (es_sort(x,y)) {
             // Roba carta de la sort
-            
-            console.log(Math.floor(Math.random() * 5));
+            let posicionovaX = Math.floor(Math.random() * (8-1) + 1);
+            let posicionovaY = Math.floor(Math.random() * (8-1) + 1);
+            // -------------------------------------------------------------------- condicio esta malament --------------------------------------------------------------------
+            while (!es_muntanya(x,y, that.jugador_actual, fitxa, that)) {
+              if (that.debug) {
+                console.log(posicionovaX + ' ' + posicionovaY);
+              }
+              posicionovaX = Math.floor(Math.random() * (8-1) + 1);
+              posicionovaY = Math.floor(Math.random() * (8-1) + 1);
+            }
+
+            if (!that.cartaSort.visible) {
+              let midaCarta = window.innerHeight/2;
+              that.cartaSort = that.add.image(window.innerWidth/2, window.innerHeight/2, 'cartaSort');
+              that.cartaSort.displayWidth = midaCarta * 0.65;
+              that.cartaSort.displayHeight = midaCarta;
+              that.cartaSort.visible = true;
+              let jugador;
+              that.jugador_actual ? jugador = ' vermell' : jugador = ' blau';
+              that.textCartaSort = that.add.text(window.innerWidth/2 - midaCarta * 0.65/2 + 40, window.innerHeight/2 + midaCarta*0.25 - 40,
+                that.estat + jugador + '\na la posició (' +posicionovaX + ',' + posicionovaY + ')\ndel tauler', { fontSize: '19px', fill: '#000'});
+            }
+
+            fitxa.x = posicionovaX;
+            fitxa.y = posicionovaY;
+            if (that.debug) {
+              console.log(posicionovaX + ' ' + posicionovaY);
+            }
           }
           
           // Moure fitxes a posicio x y
@@ -306,15 +339,17 @@ export default class PlayScene extends Scene {
           iconSettings.setDisplaySize(casellamidaX,casellamidaX);
           that = this;
           iconSettings.on('pointerup', function(event) {
-            console.log('----------------------\n' +
-                        'CASELLA SELECCIONADA\n' +
-                        'Casella: ' + i + ',' + j + '\n' + 
-                        //'Muntanya: ' + es_muntanya(i, j) + '\n' +
-                        'Palau: ' + es_palau(i,j) + '\n' +
-                        'Sort: ' + es_sort(i,j) + '\n' +
-                        'Tropes: ' + hi_ha_alguna_tropa(i,j, that).existeixTropa + '\n' +
-                        'Equip: ' + hi_ha_alguna_tropa(i,j, that).equip +
-                        '\n----------------------');
+            if (this.debug) {
+              console.log('----------------------\n' +
+                'CASELLA SELECCIONADA\n' +
+                'Casella: ' + i + ',' + j + '\n' + 
+                //'Muntanya: ' + es_muntanya(i, j) + '\n' +
+                'Palau: ' + es_palau(i,j) + '\n' +
+                'Sort: ' + es_sort(i,j) + '\n' +
+                'Tropes: ' + hi_ha_alguna_tropa(i,j, that).existeixTropa + '\n' +
+                'Equip: ' + hi_ha_alguna_tropa(i,j, that).equip +
+                '\n----------------------');
+            }
             fer_estat(i,j, that);
           });
         }
@@ -325,7 +360,7 @@ export default class PlayScene extends Scene {
     posicionar_fitxes(that);
 
     // POSEM EL TEXT DEL MOUSE PER DEBUG
-    this.debugText = this.add.text(16, 16, '', { fontSize: '32px', fill: '#000'});
+    this.debugText = this.add.text(16, 16, '', { fontSize: '32px', fill: '#000', fontFamily: 'Montserrat'});
   }
 
   update () {
@@ -333,7 +368,21 @@ export default class PlayScene extends Scene {
       let nomJugador;
       this.jugador_actual ? nomJugador = 'Vermell' : nomJugador = 'Blau';
       this.debugText.setText('Mouse: ' + this.input.mousePointer.x + ', ' + this.input.mousePointer.y +
-                             '\nTorn: ' + this.torn + '\nJugador: ' + nomJugador + '\nEstat: ' + this.estat);
+        '\nTorn: ' + this.torn + '\nJugador: ' + nomJugador + '\nEstat: ' + this.estat);
+      //console.log(this.debugText.text);
+    }
+
+    if (this.cartaSort.visible === true) {
+      if (this.temps_carta_a_sortir <= 10) {
+        this.cartaSort.visible = false;
+        this.temps_carta_a_sortir = this.constant_temps_carta_sort;
+        this.textCartaSort.setText('');
+      } else {
+        this.temps_carta_a_sortir -= 10;
+        if (this.debug) {
+          console.log(this.temps_carta_a_sortir);
+        }
+      }
     }
   }
 }

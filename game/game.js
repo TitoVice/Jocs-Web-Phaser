@@ -18,7 +18,6 @@ function launch() {
                 debug: false
             }
         },
-        advancedTiming: true,
         scene: [BootScene, PlayScene, MenuScene]
     })
 }

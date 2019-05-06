@@ -11,6 +11,7 @@ import transparent from '@/game/assets/_transparent.png';
 import debugSquare from '@/game/assets/cuadratDebug.png';
 import iconTenda from '@/game/assets/store.png';
 import moneda from '@/game/assets/coin.png';
+import cartaSort from '@/game/assets/Cartes/sortPattern.png'
 
 // Tropes
 import cavallerVermell from '@/game/assets/Fitxes/fitxes_caballer_red.png';
@@ -40,6 +41,7 @@ export default class BootScene extends Scene {
         this.load.image('debugSquare', debugSquare)
         this.load.image('iconTenda', iconTenda)
         this.load.image('moneda', moneda)
+        this.load.image('cartaSort', cartaSort)
 
 
         // Carreguem assets de les tropes
