@@ -30,9 +30,11 @@ export default class PlayScene extends Scene {
   }
 
   create () {
+    let nomjugador;
+    this.jugador_actual ? nomjugador = 'Vermell' : nomjugador = 'Groc';
     console.log("Starting PlayScene ..."
       + '\nTorn ' + this.torn
-      + '\nJugador ' + this.jugador_actual);
+      + '\nJugador ' + nomjugador);
 
     let that = this;
 
@@ -210,7 +212,7 @@ export default class PlayScene extends Scene {
               console.log('GENEREM UN NOU NUMERO ALEATORI \n' + posicionovaX + ' ' + posicionovaY);
             }
             // -------------------------------------------------------------------- condicio esta malament --------------------------------------------------------------------
-            while (!es_muntanya(x,y, that.jugador_actual, fitxa, that)) {
+            while (es_muntanya(posicionovaX, posicionovaY, that.jugador_actual, fitxa, that)) {
               posicionovaX = Math.floor(Math.random() * (8-1) + 1);
               posicionovaY = Math.floor(Math.random() * (8-1) + 1);
               if (that.debug) {

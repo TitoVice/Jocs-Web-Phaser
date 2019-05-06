@@ -8,6 +8,7 @@ import imgMenuHover from '@/game/assets/imgMenuHover.png';
 import imgMenuClicked from '@/game/assets/imgMenuClicked.png';
 import transparent from '@/game/assets/_transparent.png';
 import debugSquare from '@/game/assets/cuadratDebug.png';
+import cartaSort from '@/game/assets/sortPattern.png';
 
 // Tropes
 import cavallerVermell from '@/game/assets/Fitxes/fitxes_caballer_red.png';
@@ -34,6 +35,7 @@ export default class BootScene extends Scene {
         this.load.image('imgMenuClicked', imgMenuClicked)
         this.load.image('transparent', transparent)
         this.load.image('debugSquare', debugSquare)
+        this.load.image('cartaSort', cartaSort)
 
 
         // Carreguem assets de les tropes

@@ -68,8 +68,9 @@ una tropa del jugador_actual es mou a una posicio aleatoria del tauler
 	aquesta casella no pot ser de la sort ni muntanya [inclosa la posicio de les fitxes]!!!
 
 
-CAMBIAR ESCENA A FinalScene.js quan un dels dos acaba la partida
+CAMBIAR ESCENA
 
+A FinalScene.js quan un dels dos acaba la partida
 A FinalScene.js apareix un text que diu qui ha guanyat i en quants torns, un botó de tornar a jugar i un botó d'anar a MenuScene.js
 
 Text que diu qui li toca i què fer en cada moment de la partida
