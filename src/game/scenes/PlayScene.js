@@ -20,6 +20,8 @@ export default class PlayScene extends Scene {
     this.cartaSort = 0;
     this.constant_temps_carta_sort = 3000; // En ms
     this.temps_carta_a_sortir = this.constant_temps_carta_sort;
+
+    this.textTorn = 0;
   }
 
   init (data) { // Copiem totes les variables que ens passa la escena anterior
@@ -218,8 +220,8 @@ export default class PlayScene extends Scene {
               that.cartaSort.visible = true;
               let jugador;
               that.jugador_actual ? jugador = ' vermell' : jugador = ' groc';
-              that.textCartaSort = that.add.text(window.innerWidth/2 - midaCarta * 0.65/2 + 40, window.innerHeight/2 + midaCarta*0.25 - 40,
-                that.estat + jugador + '\na la posició (' + posicionovaX + ',' + posicionovaY + ')\ndel tauler', { fontSize: '19px', fill: '#000'});
+              that.textCartaSort = that.add.text(window.innerWidth/2 - midaCarta * 0.65/2 + 40, window.innerHeight/2 + midaCarta*0.25 - 40,'', { fontSize: '19px', fill: '#000'});
+              that.textCartaSort.setText(that.estat + jugador + '\na la posició (' + posicionovaX + ',' + posicionovaY + ')\ndel tauler');
             }
             
             fitxa.x = posicionovaX;
@@ -231,8 +233,8 @@ export default class PlayScene extends Scene {
           
           // Guanyar la partida
           if (es_palau(x, y, !that.jugador_actual)) {
-            that.jugador_actual ? that.estat = 'VERMELL' : that.estat = 'GROC';            
-            that.scene.start('MenuScene', {estat: that.estat, torns: that.torns});
+            that.jugador_actual ? that.estat = 'VERMELL' : that.estat = 'GROC';
+            that.scene.start('FinalScene', {estat: that.estat, torns: that.torns});
           }
 
           // Moure fitxes a posicio x y
@@ -250,8 +252,13 @@ export default class PlayScene extends Scene {
               that.estat = 'Moure Cavall';
               that.jugador_actual = !that.jugador_actual;
               that.torn++;
+
+              let posicioTextTornY;
+              that.jugador_actual ? posicioTextTornY = window.innerHeight - 60 : posicioTextTornY = 16;
+              that.textTorn.setPosition(that.textTorn.x, posicioTextTornY);
               break;
           }
+          that.textTorn.setText('Et Toca ' + that.estat);
         break;
       }
     }
@@ -357,6 +364,16 @@ export default class PlayScene extends Scene {
     that = this;
     posicionar_fitxes(that);
 
+
+    // POSEM EL TEXT DE TORN
+    let posicioTextTornY;
+    this.jugador_actual ? posicioTextTornY = window.innerHeight - 60 : posicioTextTornY = 16;
+    if (this.debug) {
+      console.log ('Posicio: ' + posicioTextTornY);
+    }
+    this.textTorn = this.add.text(16, posicioTextTornY, 'Et Toca ' + this.estat, { fontSize: '32px', fill: '#000', fontFamily: 'Montserrat'});
+    
+
     // POSEM EL TEXT DEL MOUSE PER DEBUG
     this.debugText = this.add.text(16, 16, '', { fontSize: '32px', fill: '#000', fontFamily: 'Montserrat'});
   }
@@ -370,6 +387,7 @@ export default class PlayScene extends Scene {
       //console.log(this.debugText.text);
     }
 
+    // Actualitzem la carta de la sort
     if (this.cartaSort.visible === true) {
       if (this.temps_carta_a_sortir <= 10) {
         this.cartaSort.visible = false;

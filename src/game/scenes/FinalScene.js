@@ -37,7 +37,20 @@ export default class FinalScene extends Scene {
 
         let that = this;
         btnStart.on('pointerup', function(event) {
-            that.scene.start('PlayScene', {monedes: that.monedes, torn: that.torn, jugador_actual: that.jugador_actual, estat: that.estat, posicionsFitxes: that.posicionsFitxes}); // Start the main game.
+            let qui_comença = Math.random() * 100;
+            let posicionsFitxes = {
+                // Equip Vermell
+                cavallV: { x: 2, y: 8 }, 
+                cleroV: { x: 3, y: 8 },
+                ninjaV: { x: 5, y: 8 },
+    
+                // Equip Groc
+                cavallG: { x: 6, y: 0 },
+                cleroG: { x: 5, y: 0 },
+                ninjaG: { x: 3, y: 0 }
+            }
+            // Start the main game.
+            that.scene.start('PlayScene', {torn: '1', jugador_actual: qui_comença < 50, estat: 'Moure Cavall', posicionsFitxes: posicionsFitxes});
         }); 
     }
 }
