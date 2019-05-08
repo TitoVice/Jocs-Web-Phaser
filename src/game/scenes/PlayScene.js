@@ -53,30 +53,7 @@ export default class PlayScene extends Scene {
       return dins;
     };
 
-    let es_muntanya = function (x, y, jugador_actual, fitxa, that) {
-      let muntanya = false;
-      if (y === 3) {
-        muntanya = (x === 3 || x === 7);
-      } else if (y === 4) {
-        muntanya = (x === 1 || x === 7);
-      } else if (y === 5) {
-        muntanya = (x === 0 || x === 4);
-      } else if (jugador_actual) { // Comprovem si vol anar al seu propi palau; en aquest cas, no pot
-        muntanya = (x === 4 && y === 8);
-      } else {
-        muntanya = (x === 4 && y === 0);
-      }
-      
-      let posicio_aliada = false;
-      // A part comprovem si el jugador vol anar al mateix lloc que una unitat aliada
-      let tmp_ans = hi_ha_alguna_tropa(x,y,that);
-      posicio_aliada = tmp_ans.existeixTropa && tmp_ans.equip === jugador_actual;
-
-      if (that.debug) {
-        console.log ( 'X: ' + fitxa.x + ' Y: ' + fitxa.y + ' | X final: ' + x + ' Y final: ' + y);
-        console.log (that.posicionsFitxes);
-      }
-
+    let es_vei = function (x, y, fitxa) {
       /* Posicions disponibles per avançar 1 casella
           x-1, y-1	    x, 	 y-1      x+1, y-1
           x-1, y		    x,	 y		    x+1, y
@@ -84,44 +61,54 @@ export default class PlayScene extends Scene {
       ![](/src/posició veins.png)
       */
 
-      let vei = (x === fitxa.x && y === fitxa.y-1);
-      if (!vei) {
-        vei = (x === fitxa.x-1 && y === fitxa.y);
-        if (!vei) {
-          vei = (x === fitxa.x+1 && y === fitxa.y);
-          if (!vei) {
-            vei = (x === fitxa.x && y === fitxa.y+1);
-          }
-        }
-      }
+     let vei = (x === fitxa.x && y === fitxa.y-1);
+     if (!vei) {
+       vei = (x === fitxa.x-1 && y === fitxa.y);
+       if (!vei) {
+         vei = (x === fitxa.x+1 && y === fitxa.y);
+         if (!vei) {
+           vei = (x === fitxa.x && y === fitxa.y+1);
+         }
+       }
+     }
 
-      if (!vei) {
-        // Si està desplaçat a la dreta
-        if (fitxa.y % 2 === 0) {
-          vei = (x === fitxa.x-1 && y === fitxa.y-1);
-          if (!vei) {
-            vei = (x === fitxa.x-1 && y === fitxa.y+1);
-          }
-        } else {
-          vei = (x === fitxa.x+1 && y === fitxa.y-1);
-          if (!vei) {
-            vei = (x === fitxa.x+1 && y === fitxa.y+1);
-          }
-        }
+     if (!vei) {
+       // Si està desplaçat a la dreta
+       if (fitxa.y % 2 === 0) {
+         vei = (x === fitxa.x-1 && y === fitxa.y-1);
+         if (!vei) {
+           vei = (x === fitxa.x-1 && y === fitxa.y+1);
+         }
+       } else {
+         vei = (x === fitxa.x+1 && y === fitxa.y-1);
+         if (!vei) {
+           vei = (x === fitxa.x+1 && y === fitxa.y+1);
+         }
+       }
+     }
+     return vei;
+    }
+
+    let es_muntanya = function (x, y) {
+      let muntanya = false;
+      if (y === 3) {
+        muntanya = (x === 3 || x === 7);
+      } else if (y === 4) {
+        muntanya = (x === 1 || x === 7);
+      } else if (y === 5) {
+        muntanya = (x === 0 || x === 4);
       }
-      
-      return muntanya || posicio_aliada || !vei || !es_de_dins(x,y);
+      return muntanya;
     };
 
     let es_palau = function (x, y, jugador_actual) {
       let palau = false;
-      if (jugador_actual) {
+      if (!jugador_actual) {
         palau = x === 4 && y === 0;
       } else {
         palau = x === 4 && y === 8;
       }
       return palau;
-      ;
     };
 
     let es_sort = function (x, y) {
@@ -131,7 +118,7 @@ export default class PlayScene extends Scene {
     let casella_posicio = function (x, y) {
       let posicio = {x: x, y: y};
       let casellaX = x, casellaY = y;
-      let offsetX = 6; let offsetY = 25;
+      let offsetX = 6, offsetY = 25;
       let tmp_posX = window.innerWidth/2 - 0.5 * taulerimg.displayHeight;
       if (casellaY%2 !== 0) {
         tmp_posX += casellamidaX*0.5;
@@ -144,30 +131,18 @@ export default class PlayScene extends Scene {
 
     let hi_ha_alguna_tropa = function (x, y, that) {
       let existeixTropa = that.posicionsFitxes.cavallV.x === x && that.posicionsFitxes.cavallV.y === y;
-      let tropa = that.cavallerVermell;
-      let equip_tropa = true;
       if (!existeixTropa) {
         existeixTropa = that.posicionsFitxes.cleroV.x === x && that.posicionsFitxes.cleroV.y === y;
-        tropa = that.cleroVermell;
-        equip_tropa = true;
         if (!existeixTropa) {
           existeixTropa = that.posicionsFitxes.ninjaV.x === x && that.posicionsFitxes.ninjaV.y === y;
-          tropa = that.ninjaVermell;
-          equip_tropa = true;
           if (!existeixTropa) {
             existeixTropa = that.posicionsFitxes.cavallB.x === x && that.posicionsFitxes.cavallB.y === y;
-            tropa = that.cavallerBlau;
-            equip_tropa = false;
             if (!existeixTropa) {
               existeixTropa = that.posicionsFitxes.cleroB.x === x && that.posicionsFitxes.cleroB.y === y;
-              tropa = that.cleroBlau;
-              equip_tropa = false;
               if (!existeixTropa) {
                 existeixTropa = that.posicionsFitxes.ninjaB.x === x && that.posicionsFitxes.ninjaB.y === y;
-                tropa = that.ninjaBlau;
-                equip_tropa = false;
       }}}}}
-      return {existeixTropa: existeixTropa, tropa: tropa, equip: equip_tropa};
+      return existeixTropa;
     }
 
     let fer_estat = function(x, y, that) {
@@ -195,8 +170,14 @@ export default class PlayScene extends Scene {
         case 'Moure Cavall' :
         case 'Moure Clero' :
         case 'Moure Ninja' :
-          // Actualitzar posicions a la estructura de dades || vermell
-          if (!es_muntanya(x,y, that.jugador_actual, fitxa, that) || hi_ha_alguna_tropa(x,y,that).existeixTropa) {
+          // Actualitzar posicions a la estructura de dades
+          if (that.debug) {
+            console.log('!esMuntanya: '+!es_muntanya(x, y) + '\n' +
+              '!hiHaTropa: ' + !hi_ha_alguna_tropa(x, y, that) + '\n' +
+              'esVei: ' + es_vei(x, y, fitxa) + '\n' +
+              '!esPalau:' + !es_palau(x, y, that.jugador_actual));
+          }
+          if (!es_muntanya(x, y) && !hi_ha_alguna_tropa(x, y, that) && es_vei(x, y, fitxa) && !es_palau(x, y, that.jugador_actual)) {
             fitxa.x = x;
             fitxa.y = y;
           } else { 
@@ -208,16 +189,23 @@ export default class PlayScene extends Scene {
             // Roba carta de la sort
             let posicionovaX = Math.floor(Math.random() * (8-1) + 1);
             let posicionovaY = Math.floor(Math.random() * (8-1) + 1);
+            
+            let valid = !(es_muntanya(posicionovaX, posicionovaY, that.jugador_actual, fitxa, that) ||
+              hi_ha_alguna_tropa(posicionovaX, posicionovaY, that) ||
+              !es_de_dins(posicionovaX, posicionovaY));
+
             if (that.debug) {
-              console.log('GENEREM UN NOU NUMERO ALEATORI \n' + posicionovaX + ' ' + posicionovaY);
+              console.log('GENEREM UN NUMERO ALEATORI \n' + posicionovaX + ' ' + posicionovaY + '\nValid: ' + valid);
             }
-            // -------------------------------------------------------------------- condicio esta malament --------------------------------------------------------------------
-            while (es_muntanya(posicionovaX, posicionovaY, that.jugador_actual, fitxa, that)) {
+            while (!valid) {
               posicionovaX = Math.floor(Math.random() * (8-1) + 1);
               posicionovaY = Math.floor(Math.random() * (8-1) + 1);
               if (that.debug) {
-                console.log(posicionovaX + ' ' + posicionovaY);
+                console.log('GENEREM UN NOU NUMERO ALEATORI \n' + posicionovaX + ' ' + posicionovaY + '\nValid: ' + valid);
               }
+              valid = ! (es_muntanya(posicionovaX, posicionovaY, that.jugador_actual, fitxa, that) ||
+                hi_ha_alguna_tropa(posicionovaX, posicionovaY, that) ||
+                !es_de_dins(posicionovaX, posicionovaY));
             }
 
             if (!that.cartaSort.visible) {
@@ -229,9 +217,9 @@ export default class PlayScene extends Scene {
               let jugador;
               that.jugador_actual ? jugador = ' vermell' : jugador = ' groc';
               that.textCartaSort = that.add.text(window.innerWidth/2 - midaCarta * 0.65/2 + 40, window.innerHeight/2 + midaCarta*0.25 - 40,
-                that.estat + jugador + '\na la posició (' +posicionovaX + ',' + posicionovaY + ')\ndel tauler', { fontSize: '19px', fill: '#000'});
+                that.estat + jugador + '\na la posició (' + posicionovaX + ',' + posicionovaY + ')\ndel tauler', { fontSize: '19px', fill: '#000'});
             }
-
+            
             fitxa.x = posicionovaX;
             fitxa.y = posicionovaY;
             if (that.debug) {
@@ -240,7 +228,7 @@ export default class PlayScene extends Scene {
           }
           
           // Guanyar la partida
-          if (es_palau(x, y, that.jugador_actual)) {
+          if (es_palau(x, y, !that.jugador_actual)) {
             that.jugador_actual ? that.estat = 'VERMELL' : that.estat = 'GROC';            
             that.scene.start('MenuScene', {estat: that.estat, torns: that.torns});
           }
@@ -344,15 +332,14 @@ export default class PlayScene extends Scene {
           iconSettings.setDisplaySize(casellamidaX,casellamidaX);
           that = this;
           iconSettings.on('pointerup', function(event) {
-            if (this.debug) {
+            if (that.debug) {
               console.log('----------------------\n' +
                 'CASELLA SELECCIONADA\n' +
                 'Casella: ' + i + ',' + j + '\n' + 
                 //'Muntanya: ' + es_muntanya(i, j) + '\n' +
                 'Palau: ' + es_palau(i,j) + '\n' +
                 'Sort: ' + es_sort(i,j) + '\n' +
-                'Tropes: ' + hi_ha_alguna_tropa(i,j, that).existeixTropa + '\n' +
-                'Equip: ' + hi_ha_alguna_tropa(i,j, that).equip +
+                'Tropes: ' + hi_ha_alguna_tropa(i,j, that) +
                 '\n----------------------');
             }
             fer_estat(i,j, that);
@@ -371,7 +358,7 @@ export default class PlayScene extends Scene {
   update () {
     if (this.debug) {
       let nomJugador;
-      this.jugador_actual ? nomJugador = 'Vermell' : nomJugador = 'Blau';
+      this.jugador_actual ? nomJugador = 'Vermell' : nomJugador = 'Groc';
       this.debugText.setText('Mouse: ' + this.input.mousePointer.x + ', ' + this.input.mousePointer.y +
         '\nTorn: ' + this.torn + '\nJugador: ' + nomJugador + '\nEstat: ' + this.estat);
       //console.log(this.debugText.text);
@@ -385,7 +372,7 @@ export default class PlayScene extends Scene {
       } else {
         this.temps_carta_a_sortir -= 10;
         if (this.debug) {
-          console.log(this.temps_carta_a_sortir);
+          console.log('Temps: ' +this.temps_carta_a_sortir);
         }
       }
     }
