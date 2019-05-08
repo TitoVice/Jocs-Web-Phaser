@@ -2,7 +2,7 @@ import {Scene} from 'phaser'
 
 export default class MenuScene extends Scene {
     constructor() {
-        super({key: 'MenuScene'})
+        super({ key: 'MenuScene' })
     }
 
     create() {

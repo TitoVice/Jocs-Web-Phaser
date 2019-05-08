@@ -2,7 +2,7 @@ import {Scene} from 'phaser'
 
 export default class FinalScene extends Scene {
     constructor() {
-        super({key: 'FinalScene', monedes: 'monedes'})
+        super({ key: 'FinalScene' })
     }
     
     init (data) { // Copiem totes les variables que ens passa la escena anterior
@@ -17,7 +17,7 @@ export default class FinalScene extends Scene {
         fonsimg.displayHeight=window.innerHeight*2;
 
         // RESULTAT DEL MATCH
-        let textResultat = this.add.text(window.innerWidth/2, window.innerHeight/2,
+        let textResultat = this.add.text(window.innerWidth/2, window.innerHeight/2 - 200,
             'Ha guanyat el jugador ' + this.estat + ' en ' + this.torn + ' torns!.', { fontSize: '19px', fill: '#000'});
 
         // Start Button

@@ -64,19 +64,26 @@ x, y+1
 
 CASELLES DE LA SORT
 
-una tropa del jugador_actual es mou a una posicio aleatoria del tauler
+- una tropa del jugador_actual es mou a una posicio aleatoria del tauler 							---FET---
 	aquesta casella no pot ser de la sort ni muntanya [inclosa la posicio de les fitxes]!!!
 
 
 CAMBIAR ESCENA
 
-A FinalScene.js quan un dels dos acaba la partida
-A FinalScene.js apareix un text que diu qui ha guanyat i en quants torns, un botó de tornar a jugar i un botó d'anar a MenuScene.js
+- A FinalScene.js quan un dels dos acaba la partida													---FET---
+- A FinalScene.js apareix un text que diu qui ha guanyat i en quants torns,
+	un botó de tornar a jugar i un botó d'anar a MenuScene.js
 
-Text que diu qui li toca i què fer en cada moment de la partida
-la posicio del text es a 1/4 de window.Height si el jugador_actual es blau
-si es el vermell, llavors 3/4 de window.Height
-Dins d'aquest text posarà el què ha de fer.
+- Text que diu qui li toca i què fer en cada moment de la partida									---FET---
+	la posicio del text es a 1/4 de window.Height si el jugador_actual es blau
+	Si es el vermell, llavors 3/4 de window.Height
+	Dins d'aquest text posarà el què ha de fer.
 
 
-TROPA A MOURE ACTUAL, CREAR UN SPRITE AMB TRANSPARÈNCIA QUE INDIQUI QUINA ES LA TROPA A MOURE EN AQUELL MOMENT
+TROPA A MOURE ACTUAL, CREAR UN SPRITE AMB TRANSPARÈNCIA QUE
+INDIQUI QUINA ES LA TROPA A MOURE EN AQUELL MOMENT
+
+
+MOURE REFERENCIA
+
+fitxa

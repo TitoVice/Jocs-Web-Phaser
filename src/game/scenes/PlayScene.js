@@ -22,6 +22,8 @@ export default class PlayScene extends Scene {
     this.temps_carta_a_sortir = this.constant_temps_carta_sort;
 
     this.textTorn = 0;
+    this.imgTropaActual = 0;
+    this.tween = 0;
   }
 
   init (data) { // Copiem totes les variables que ens passa la escena anterior
@@ -39,6 +41,7 @@ export default class PlayScene extends Scene {
       + '\nJugador ' + nomjugador);
 
     let that = this;
+    let posicioReferencia = {x: 0, y: 0};
 
     // ---------------------- FUNCIONS BOOLEANES DE LES CASELLES ---------------------- 
     let es_de_dins = function (x, y) {
@@ -151,115 +154,133 @@ export default class PlayScene extends Scene {
 
     let fer_estat = function(x, y, that) {
       let fitxa = 0;
+      let fitxa_actual = 0;
       if (that.jugador_actual) {
         switch (that.estat) {
-          case 'Moure Cavall' : 
-            fitxa = that.posicionsFitxes.cavallV; break;
-          case 'Moure Clero' :
-            fitxa = that.posicionsFitxes.cleroV; break;
-          case 'Moure Ninja' :
-            fitxa = that.posicionsFitxes.ninjaV; break;
+        case 'Moure Cavall' : 
+          fitxa = that.posicionsFitxes.cavallV;
+          fitxa_actual = that.posicionsFitxes.cleroV;
+          break;
+        case 'Moure Clero' :
+          fitxa = that.posicionsFitxes.cleroV;
+          fitxa_actual = that.posicionsFitxes.ninjaV;
+          break;
+        case 'Moure Ninja' :
+          fitxa = that.posicionsFitxes.ninjaV;
+          fitxa_actual = that.posicionsFitxes.cavallG;
+          break;
         }
       } else {
         switch (that.estat) {
-          case 'Moure Cavall' : 
-            fitxa = that.posicionsFitxes.cavallG; break;
-          case 'Moure Clero' :
-            fitxa = that.posicionsFitxes.cleroG; break;
-          case 'Moure Ninja' :
-            fitxa = that.posicionsFitxes.ninjaG; break;
+        case 'Moure Cavall' : 
+          fitxa = that.posicionsFitxes.cavallG;
+          fitxa_actual = that.posicionsFitxes.cleroG;
+          break;
+        case 'Moure Clero' :
+          fitxa = that.posicionsFitxes.cleroG;
+          fitxa_actual = that.posicionsFitxes.ninjaG;
+          break;
+        case 'Moure Ninja' :
+          fitxa = that.posicionsFitxes.ninjaG;
+          fitxa_actual = that.posicionsFitxes.cavallV;
+          break;
         }
       }
       switch (that.estat) {
-        case 'Moure Cavall' :
-        case 'Moure Clero' :
-        case 'Moure Ninja' :
-          // Actualitzar posicions a la estructura de dades
-          if (that.debug) {
-            console.log('!esMuntanya: '+!es_muntanya(x, y) + '\n' +
-              '!hiHaTropa: ' + !hi_ha_alguna_tropa(x, y, that) + '\n' +
-              'esVei: ' + es_vei(x, y, fitxa) + '\n' +
-              '!esPalau:' + !es_palau(x, y, that.jugador_actual));
-          }
-          if (!es_muntanya(x, y) && !hi_ha_alguna_tropa(x, y, that) && es_vei(x, y, fitxa) && !es_palau(x, y, that.jugador_actual)) {
-            fitxa.x = x;
-            fitxa.y = y;
-          } else { 
-            break;
-          }
+      case 'Moure Cavall' :
+      case 'Moure Clero' :
+      case 'Moure Ninja' :
+        // Actualitzar posicions a la estructura de dades
+        if (that.debug) {
+          console.log('!esMuntanya: '+!es_muntanya(x, y) + '\n' +
+            '!hiHaTropa: ' + !hi_ha_alguna_tropa(x, y, that) + '\n' +
+            'esVei: ' + es_vei(x, y, fitxa) + '\n' +
+            '!esPalau:' + !es_palau(x, y, that.jugador_actual));
+        }
+        if (!es_muntanya(x, y) && !hi_ha_alguna_tropa(x, y, that) && es_vei(x, y, fitxa) && !es_palau(x, y, that.jugador_actual)) {
+          fitxa.x = x;
+          fitxa.y = y;
+        } else { 
+          break;
+        }
 
-          // Roba carta de la sort
-          if (es_sort(x,y)) {
-            // Roba carta de la sort
-            let posicionovaX = Math.floor(Math.random() * (8-1) + 1);
-            let posicionovaY = Math.floor(Math.random() * (8-1) + 1);
-            
-            let valid = !(es_muntanya(posicionovaX, posicionovaY, that.jugador_actual, fitxa, that) ||
+        // Roba carta de la sort
+        if (es_sort(x,y)) {
+          let posicionovaX = Math.floor(Math.random() * (8-1) + 1);
+          let posicionovaY = Math.floor(Math.random() * (8-1) + 1);
+          
+          let valid = !(es_muntanya(posicionovaX, posicionovaY, that.jugador_actual, fitxa, that) ||
+            hi_ha_alguna_tropa(posicionovaX, posicionovaY, that) ||
+            !es_de_dins(posicionovaX, posicionovaY));
+
+          if (that.debug) {
+            console.log('GENEREM UN NUMERO ALEATORI \n' + posicionovaX + ' ' + posicionovaY + '\nValid: ' + valid);
+          }
+          while (!valid) {
+            posicionovaX = Math.floor(Math.random() * (8-1) + 1);
+            posicionovaY = Math.floor(Math.random() * (8-1) + 1);
+            if (that.debug) {
+              console.log('GENEREM UN NOU NUMERO ALEATORI \n' + posicionovaX + ' ' + posicionovaY + '\nValid: ' + valid);
+            }
+            valid = ! (es_muntanya(posicionovaX, posicionovaY, that.jugador_actual, fitxa, that) ||
               hi_ha_alguna_tropa(posicionovaX, posicionovaY, that) ||
               !es_de_dins(posicionovaX, posicionovaY));
+          }
 
-            if (that.debug) {
-              console.log('GENEREM UN NUMERO ALEATORI \n' + posicionovaX + ' ' + posicionovaY + '\nValid: ' + valid);
-            }
-            while (!valid) {
-              posicionovaX = Math.floor(Math.random() * (8-1) + 1);
-              posicionovaY = Math.floor(Math.random() * (8-1) + 1);
-              if (that.debug) {
-                console.log('GENEREM UN NOU NUMERO ALEATORI \n' + posicionovaX + ' ' + posicionovaY + '\nValid: ' + valid);
-              }
-              valid = ! (es_muntanya(posicionovaX, posicionovaY, that.jugador_actual, fitxa, that) ||
-                hi_ha_alguna_tropa(posicionovaX, posicionovaY, that) ||
-                !es_de_dins(posicionovaX, posicionovaY));
-            }
-
-            if (!that.cartaSort.visible) {
-              let midaCarta = window.innerHeight/2;
-              that.cartaSort = that.add.image(window.innerWidth/2, window.innerHeight/2, 'cartaSort');
-              that.cartaSort.displayWidth = midaCarta * 0.65;
-              that.cartaSort.displayHeight = midaCarta;
-              that.cartaSort.visible = true;
-              let jugador;
-              that.jugador_actual ? jugador = ' vermell' : jugador = ' groc';
-              that.textCartaSort = that.add.text(window.innerWidth/2 - midaCarta * 0.65/2 + 40, window.innerHeight/2 + midaCarta*0.25 - 40,'', { fontSize: '19px', fill: '#000'});
-              that.textCartaSort.setText(that.estat + jugador + '\na la posició (' + posicionovaX + ',' + posicionovaY + ')\ndel tauler');
-            }
-            
-            fitxa.x = posicionovaX;
-            fitxa.y = posicionovaY;
-            if (that.debug) {
-              console.log(posicionovaX + ' ' + posicionovaY);
-            }
+          if (!that.cartaSort.visible) {
+            let midaCarta = window.innerHeight/2;
+            that.cartaSort = that.add.image(window.innerWidth/2, window.innerHeight/2, 'cartaSort');
+            that.cartaSort.displayWidth = midaCarta * 0.65;
+            that.cartaSort.displayHeight = midaCarta;
+            that.cartaSort.visible = true;
+            let jugador;
+            that.jugador_actual ? jugador = ' vermell' : jugador = ' groc';
+            that.textCartaSort = that.add.text(window.innerWidth/2 - midaCarta * 0.65/2 + 40, window.innerHeight/2 + midaCarta*0.25 - 40,'', { fontSize: '19px', fill: '#000'});
+            that.textCartaSort.setText(that.estat + jugador + '\na la posició (' + posicionovaX + ',' + posicionovaY + ')\ndel tauler');
           }
           
-          // Guanyar la partida
-          if (es_palau(x, y, !that.jugador_actual)) {
-            that.jugador_actual ? that.estat = 'VERMELL' : that.estat = 'GROC';
-            that.scene.start('FinalScene', {estat: that.estat, torns: that.torns});
+          fitxa.x = posicionovaX;
+          fitxa.y = posicionovaY;
+          if (that.debug) {
+            console.log(posicionovaX + ' ' + posicionovaY);
           }
+        }
+        
+        // Guanyar la partida
+        if (es_palau(x, y, !that.jugador_actual)) {
+          that.jugador_actual ? that.estat = 'VERMELL' : that.estat = 'GROC';
+          that.scene.start('FinalScene', {estat: that.estat, torns: that.torn});
+        }
 
-          // Moure fitxes a posicio x y
-          moure_fitxes(that);
+        // Moure fitxes a posicio x y
+        moure_fitxes(that);
 
-          // Canviar estat a seguent
-          switch (that.estat) {
-            case 'Moure Cavall':
-              that.estat = 'Moure Clero';
-              break;
-            case 'Moure Clero':
-              that.estat = 'Moure Ninja';
-              break;
-            case 'Moure Ninja':
-              that.estat = 'Moure Cavall';
-              that.jugador_actual = !that.jugador_actual;
-              that.torn++;
+        // Canviar estat a seguent
+        switch (that.estat) {
+        case 'Moure Cavall':
+          that.estat = 'Moure Clero';
+          break;
+        case 'Moure Clero':
+          that.estat = 'Moure Ninja';
+          break;
+        case 'Moure Ninja':
+          that.estat = 'Moure Cavall';
+          that.jugador_actual = !that.jugador_actual;
+          that.torn++;
 
-              let posicioTextTornY;
-              that.jugador_actual ? posicioTextTornY = window.innerHeight - 60 : posicioTextTornY = 16;
-              that.textTorn.setPosition(that.textTorn.x, posicioTextTornY);
-              break;
-          }
-          that.textTorn.setText('Et Toca ' + that.estat);
-        break;
+          let posicioTextTornY;
+          that.jugador_actual ? posicioTextTornY = window.innerHeight - 60 : posicioTextTornY = 16;
+          that.textTorn.setPosition(that.textTorn.x, posicioTextTornY);
+          break;
+        }
+
+        // MOVEM LA REFERENCIA A LA PEÇA AL TAULER QUE TOCA
+        let pos = casella_posicio(fitxa_actual.x, fitxa_actual.y);
+        that.imgTropaActual.x = pos.x;
+        that.imgTropaActual.y = pos.y;
+        that.tween.restart();
+        that.textTorn.setText('Et Toca ' + that.estat);
+      break;
       }
     }
     
@@ -374,8 +395,36 @@ export default class PlayScene extends Scene {
     this.textTorn = this.add.text(16, posicioTextTornY, 'Et Toca ' + this.estat, { fontSize: '32px', fill: '#000', fontFamily: 'Montserrat'});
     
 
+    // POSEM LA IMATGE DE LA TROPA ACTUAL A MOURE
+    if (this.jugador_actual) {
+      posicioReferencia.x = this.posicionsFitxes.cavallV.x;
+      posicioReferencia.y = this.posicionsFitxes.cavallV.y;
+    } else {
+      posicioReferencia.x = this.posicionsFitxes.cavallG.x;
+      posicioReferencia.y = this.posicionsFitxes.cavallG.y;
+    }
+    let posicioReferenciaTauler = casella_posicio(posicioReferencia.x, posicioReferencia.y);
+    
+    this.imgTropaActual = this.add.image(posicioReferenciaTauler.x, posicioReferenciaTauler.y, 'casellaActual');
+    this.imgTropaActual.setDisplaySize(casellamidaX*2, casellamidaX*2);
+
+    // HI AFEGIM UN EFECTE DE FADE
+    this.tween = this.add.tween({
+      targets: [this.imgTropaActual], // Imatge a la que afecta l'efecte
+      ease: 'Cubic', // Tipus
+      duration: 1000, // Durada en ms de cada ANADA
+      delay: 0, // No vull cap espera entre fade i fade
+      repeat: -1, // Repeteix infinitament
+      yoyo: true, // Perque vagi d'endavant enrere
+      alpha: {
+        getStart: () => 0, // Alpha al principi
+        getEnd: () => 0.9 // Alpha al final
+      },
+      useFrames: false // En ms; en cas de FALSE s'utilitzarien mesures en Frames
+    });
+
     // POSEM EL TEXT DEL MOUSE PER DEBUG
-    this.debugText = this.add.text(16, 16, '', { fontSize: '32px', fill: '#000', fontFamily: 'Montserrat'});
+    this.debugText = this.add.text(16, 16, '', { fontSize: '32px', fill: '#000', fontFamily: 'Montserrat' });
   }
 
   update () {
