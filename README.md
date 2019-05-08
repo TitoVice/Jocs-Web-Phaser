@@ -1,4 +1,4 @@
-# Phaser Game
+# GUERRES HEXAGONALS
 ## Assignatura: Jocs Web
 ## Aleix Ferré, Joel Oliveras i Vicenç Verge
 ## Not finished
