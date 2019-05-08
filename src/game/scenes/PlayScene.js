@@ -249,7 +249,7 @@ export default class PlayScene extends Scene {
         // Guanyar la partida
         if (es_palau(x, y, !that.jugador_actual)) {
           that.jugador_actual ? that.estat = 'VERMELL' : that.estat = 'GROC';
-          that.scene.start('FinalScene', {estat: that.estat, torns: that.torn});
+          that.scene.start('FinalScene', {estat: that.estat, torn: that.torn});
         }
 
         // Moure fitxes a posicio x y
@@ -389,9 +389,6 @@ export default class PlayScene extends Scene {
     // POSEM EL TEXT DE TORN
     let posicioTextTornY;
     this.jugador_actual ? posicioTextTornY = window.innerHeight - 60 : posicioTextTornY = 16;
-    if (this.debug) {
-      console.log ('Posicio: ' + posicioTextTornY);
-    }
     this.textTorn = this.add.text(16, posicioTextTornY, 'Et Toca ' + this.estat, { fontSize: '32px', fill: '#000', fontFamily: 'Montserrat'});
     
 
@@ -433,7 +430,6 @@ export default class PlayScene extends Scene {
       this.jugador_actual ? nomJugador = 'Vermell' : nomJugador = 'Groc';
       this.debugText.setText('Mouse: ' + this.input.mousePointer.x + ', ' + this.input.mousePointer.y +
         '\nTorn: ' + this.torn + '\nJugador: ' + nomJugador + '\nEstat: ' + this.estat);
-      //console.log(this.debugText.text);
     }
 
     // Actualitzem la carta de la sort
