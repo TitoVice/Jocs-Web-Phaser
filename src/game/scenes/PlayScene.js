@@ -18,8 +18,8 @@ export default class PlayScene extends Scene {
     this.carta_sort_mostrada = false;
     this.textCartaSort = 0;
     this.cartaSort = 0;
-    this.constant_temps_carta_sort = 1000;
-    this.temps_carta_a_sortir = this.constant_temps_carta_sort; // En ms
+    this.constant_temps_carta_sort = 3000; // En ms
+    this.temps_carta_a_sortir = this.constant_temps_carta_sort;
   }
 
   init (data) { // Copiem totes les variables que ens passa la escena anterior
@@ -115,20 +115,6 @@ export default class PlayScene extends Scene {
       return (x === 8 && y === 4) || (x === 0 && y === 4);
     };
 
-    let casella_posicio = function (x, y) {
-      let posicio = {x: x, y: y};
-      let casellaX = x, casellaY = y;
-      let offsetX = 6, offsetY = 25;
-      let tmp_posX = window.innerWidth/2 - 0.5 * taulerimg.displayHeight;
-      if (casellaY%2 !== 0) {
-        tmp_posX += casellamidaX*0.5;
-      }
-      let tmp_posY = casellamidaY;
-      posicio.x = (casellaX)*casellamidaX + tmp_posX + offsetX;
-      posicio.y = (casellaY)*casellamidaY + tmp_posY - casellamidaX/2 + offsetY;
-      return posicio;
-    };
-
     let hi_ha_alguna_tropa = function (x, y, that) {
       let existeixTropa = that.posicionsFitxes.cavallV.x === x && that.posicionsFitxes.cavallV.y === y;
       if (!existeixTropa) {
@@ -144,6 +130,22 @@ export default class PlayScene extends Scene {
       }}}}}
       return existeixTropa;
     }
+
+    // ---------------------- ALTRES FUNCIONS DE LES CASELLES ---------------------- 
+
+    let casella_posicio = function (x, y) {
+      let posicio = {x: x, y: y};
+      let casellaX = x, casellaY = y;
+      let offsetX = 6, offsetY = 25;
+      let tmp_posX = window.innerWidth/2 - 0.5 * taulerimg.displayHeight;
+      if (casellaY%2 !== 0) {
+        tmp_posX += casellamidaX*0.5;
+      }
+      let tmp_posY = casellamidaY;
+      posicio.x = (casellaX)*casellamidaX + tmp_posX + offsetX;
+      posicio.y = (casellaY)*casellamidaY + tmp_posY - casellamidaX/2 + offsetY;
+      return posicio;
+    };    
 
     let fer_estat = function(x, y, that) {
       let fitxa = 0;
@@ -307,6 +309,9 @@ export default class PlayScene extends Scene {
       posicioActual = casella_posicio(that.posicionsFitxes.ninjaG.x, that.posicionsFitxes.ninjaG.y);
       that.ninjaBlau.setPosition(posicioActual.x, posicioActual.y);
     }
+
+    
+    // ---------------------- MAIN ---------------------- 
 
     // Pintem el fons
     let fonsimg = this.add.image(window.innerWidth/2, window.innerHeight/2, 'fons');
