@@ -43,9 +43,9 @@ export default class BootScene extends Scene {
         this.load.image('cleroVermell', cleroVermell)
         this.load.image('ninjaVermell', ninjaVermell)
 
-        this.load.image('cavallerBlau', cavallerGroc)
-        this.load.image('cleroBlau', cleroGroc)
-        this.load.image('ninjaBlau', ninjaGroc)
+        this.load.image('cavallerGroc', cavallerGroc)
+        this.load.image('cleroGroc', cleroGroc)
+        this.load.image('ninjaGroc', ninjaGroc)
     }
 
     create() {

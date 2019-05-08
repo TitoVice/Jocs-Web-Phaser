@@ -32,10 +32,10 @@ export default class MenuScene extends Scene {
             cleroV: { x: 3, y: 8 },
             ninjaV: { x: 5, y: 8 },
 
-            // Equip Blau
-            cavallB: { x: 6, y: 0 },
-            cleroB: { x: 5, y: 0 },
-            ninjaB: { x: 3, y: 0 }
+            // Equip Groc
+            cavallG: { x: 6, y: 0 },
+            cleroG: { x: 5, y: 0 },
+            ninjaG: { x: 3, y: 0 }
         }
 
         let that = this;

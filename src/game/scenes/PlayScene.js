@@ -136,11 +136,11 @@ export default class PlayScene extends Scene {
         if (!existeixTropa) {
           existeixTropa = that.posicionsFitxes.ninjaV.x === x && that.posicionsFitxes.ninjaV.y === y;
           if (!existeixTropa) {
-            existeixTropa = that.posicionsFitxes.cavallB.x === x && that.posicionsFitxes.cavallB.y === y;
+            existeixTropa = that.posicionsFitxes.cavallG.x === x && that.posicionsFitxes.cavallG.y === y;
             if (!existeixTropa) {
-              existeixTropa = that.posicionsFitxes.cleroB.x === x && that.posicionsFitxes.cleroB.y === y;
+              existeixTropa = that.posicionsFitxes.cleroG.x === x && that.posicionsFitxes.cleroG.y === y;
               if (!existeixTropa) {
-                existeixTropa = that.posicionsFitxes.ninjaB.x === x && that.posicionsFitxes.ninjaB.y === y;
+                existeixTropa = that.posicionsFitxes.ninjaG.x === x && that.posicionsFitxes.ninjaG.y === y;
       }}}}}
       return existeixTropa;
     }
@@ -159,11 +159,11 @@ export default class PlayScene extends Scene {
       } else {
         switch (that.estat) {
           case 'Moure Cavall' : 
-            fitxa = that.posicionsFitxes.cavallB; break;
+            fitxa = that.posicionsFitxes.cavallG; break;
           case 'Moure Clero' :
-            fitxa = that.posicionsFitxes.cleroB; break;
+            fitxa = that.posicionsFitxes.cleroG; break;
           case 'Moure Ninja' :
-            fitxa = that.posicionsFitxes.ninjaB; break;
+            fitxa = that.posicionsFitxes.ninjaG; break;
         }
       }
       switch (that.estat) {
@@ -248,6 +248,7 @@ export default class PlayScene extends Scene {
               that.estat = 'Moure Cavall';
               that.jugador_actual = !that.jugador_actual;
               that.torn++;
+              break;
           }
         break;
       }
@@ -271,16 +272,16 @@ export default class PlayScene extends Scene {
 
 
       // Equip blau
-      posicioActual = casella_posicio(that.posicionsFitxes.cavallB.x, that.posicionsFitxes.cavallB.y);
-      that.cavallerBlau = that.add.image(posicioActual.x, posicioActual.y, 'cavallerBlau');
+      posicioActual = casella_posicio(that.posicionsFitxes.cavallG.x, that.posicionsFitxes.cavallG.y);
+      that.cavallerBlau = that.add.image(posicioActual.x, posicioActual.y, 'cavallerGroc');
       that.cavallerBlau.setDisplaySize(casellamidaY, casellamidaY);
 
-      posicioActual = casella_posicio(that.posicionsFitxes.cleroB.x, that.posicionsFitxes.cleroB.y);
-      that.cleroBlau = that.add.image(posicioActual.x, posicioActual.y, 'cleroBlau');
+      posicioActual = casella_posicio(that.posicionsFitxes.cleroG.x, that.posicionsFitxes.cleroG.y);
+      that.cleroBlau = that.add.image(posicioActual.x, posicioActual.y, 'cleroGroc');
       that.cleroBlau.setDisplaySize(casellamidaY, casellamidaY);
 
-      posicioActual = casella_posicio(that.posicionsFitxes.ninjaB.x, that.posicionsFitxes.ninjaB.y);
-      that.ninjaBlau = that.add.image(posicioActual.x, posicioActual.y, 'ninjaBlau');
+      posicioActual = casella_posicio(that.posicionsFitxes.ninjaG.x, that.posicionsFitxes.ninjaG.y);
+      that.ninjaBlau = that.add.image(posicioActual.x, posicioActual.y, 'ninjaGroc');
       that.ninjaBlau.setDisplaySize(casellamidaY, casellamidaY);
     }
 
@@ -297,13 +298,13 @@ export default class PlayScene extends Scene {
 
 
       // Equip blau
-      posicioActual = casella_posicio(that.posicionsFitxes.cavallB.x, that.posicionsFitxes.cavallB.y);
+      posicioActual = casella_posicio(that.posicionsFitxes.cavallG.x, that.posicionsFitxes.cavallG.y);
       that.cavallerBlau.setPosition(posicioActual.x, posicioActual.y);;
 
-      posicioActual = casella_posicio(that.posicionsFitxes.cleroB.x, that.posicionsFitxes.cleroB.y);
+      posicioActual = casella_posicio(that.posicionsFitxes.cleroG.x, that.posicionsFitxes.cleroG.y);
       that.cleroBlau.setPosition(posicioActual.x, posicioActual.y);
 
-      posicioActual = casella_posicio(that.posicionsFitxes.ninjaB.x, that.posicionsFitxes.ninjaB.y);
+      posicioActual = casella_posicio(that.posicionsFitxes.ninjaG.x, that.posicionsFitxes.ninjaG.y);
       that.ninjaBlau.setPosition(posicioActual.x, posicioActual.y);
     }
 
