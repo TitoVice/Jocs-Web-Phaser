@@ -235,7 +235,7 @@ export default class PlayScene extends Scene {
             that.cartaSort.visible = true;
             let jugador;
             that.jugador_actual ? jugador = ' vermell' : jugador = ' groc';
-            that.textCartaSort = that.add.text(window.innerWidth/2 - midaCarta * 0.65/2 + 40, window.innerHeight/2 + midaCarta*0.25 - 40,'', { fontSize: '19px', fill: '#000'});
+            that.textCartaSort = that.add.text(window.innerWidth/2 - midaCarta * 0.65/2 + 50, window.innerHeight/2 + midaCarta*0.25 - 40, '', { fontSize: '19px', fill: '#000', fontFamily: 'Montserrat', align: 'center'});
             that.textCartaSort.setText(that.estat + jugador + '\na la posició (' + posicionovaX + ',' + posicionovaY + ')\ndel tauler');
           }
           
@@ -440,8 +440,10 @@ export default class PlayScene extends Scene {
         this.textCartaSort.setText('');
       } else {
         this.temps_carta_a_sortir -= 10;
+        this.cartaSort.alpha = this.temps_carta_a_sortir/100;
+        this.textCartaSort.alpha = this.temps_carta_a_sortir/100;
         if (this.debug) {
-          console.log('Temps: ' +this.temps_carta_a_sortir);
+          console.log('Temps: ' + this.temps_carta_a_sortir);
         }
       }
     }
